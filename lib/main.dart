@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:taskspinner/core/helpers/dekhao.dart';
+import 'package:taskspinner/core/services/app_services.dart';
 import 'app/ui/pages/app.dart';
+import 'core/features/settings/presentation/notifiers/settings_data_provider.dart';
 import 'init_dependencies.dart';
 import 'utils/themes/themes.dart';
 
@@ -17,18 +20,43 @@ void main() async{
   
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+
+  int _cnt = 0;
+  ThemeMode _themeMode = AppServices.settingsDataProvider.currentAppearence.themeMode;
+  PrimaryColorMode _primaryColorMode = AppServices.settingsDataProvider.currentAppearence.primaryColorMode;
+
+  @override
+  void didChangeDependencies() {
+
+    AppServices.settingsDataProvider.addListener(() {
+      dekhao("appearence changed. calling setState()");
+      if (mounted && context.mounted && (_themeMode != AppServices.settingsDataProvider.currentAppearence.themeMode || _primaryColorMode != AppServices.settingsDataProvider.currentAppearence.primaryColorMode)) {
+        _themeMode = AppServices.settingsDataProvider.currentAppearence.themeMode;
+        _primaryColorMode = AppServices.settingsDataProvider.currentAppearence.primaryColorMode;
+        setState(() {});
+      }
+    });
+    super.didChangeDependencies();
+  }
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    _cnt++;
+    dekhao("App building... $_cnt times");
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
-      theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.system,
+      title: 'Task Spinner',
+      theme: AppTheme().lightTheme,
+      darkTheme: AppTheme().darkTheme,
+      themeMode: AppServices.settingsDataProvider.currentAppearence.themeMode,
       home: const SpinnerTaskApp(),
     );
   }

@@ -39,7 +39,7 @@ class CustomTextfield extends StatelessWidget {
               onSubmit();
             },
             decoration: InputDecoration(
-              floatingLabelBehavior: FloatingLabelBehavior.auto,
+              floatingLabelBehavior: FloatingLabelBehavior.always,
               alignLabelWithHint: false,
               constraints: BoxConstraints(minHeight: constraints.maxHeight),
               hintText: hintText,

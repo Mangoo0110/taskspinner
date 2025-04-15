@@ -1,38 +1,39 @@
-import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_fortune_wheel/flutter_fortune_wheel.dart';
-import 'package:taskspinner/core/services/app_services.dart';
+import 'package:taskspinner/app/ui/controllers/task_wheel_ui_notifier.dart';
+import 'package:taskspinner/core/commons/enums/tasktype.dart';
+import 'package:taskspinner/core/helpers/dekhao.dart';
 import 'package:taskspinner/utils/constants/app_colors.dart';
 
-import '../../domain/entities/wheel_task.dart';
 
 class Wheel extends StatefulWidget {
-  const Wheel({super.key});
+  final TaskWheelUINotifier taskWheelUINotifier;
+  const Wheel({super.key, required this.taskWheelUINotifier});
 
   @override
   State<Wheel> createState() => _WheelState();
 }
 
 class _WheelState extends State<Wheel> {
-  StreamController<int> controller = StreamController<int>();
+  
 
-  List<WheelTask> tasks = [];
+  late TaskType currentTaskType;
+  late UpToDateCurrentTasks upToDateCurrentTasks;
   int _selectedIndex = 0;
 
-  void _getRandomNumber() {
-    _selectedIndex = Random().nextInt(tasks.length);
-    controller.add(_selectedIndex);
-  }
 
   @override
   void didChangeDependencies() {
     // TODO: implement didChangeDependencies
-    AppServices.tasksNotifier.addListener(() {
-      if (mounted) {
+    widget.taskWheelUINotifier.addListener(() {
+      dekhao("data changed in task notifier");
+      if (mounted && context.mounted && upToDateCurrentTasks != widget.taskWheelUINotifier.upToDateCurrentTasks) {
+        currentTaskType = widget.taskWheelUINotifier.currentTaskType;
+        dekhao("Current task type changed to $currentTaskType");
         setState(() {
-          tasks = AppServices.tasksNotifier.tasks;
+          upToDateCurrentTasks = widget.taskWheelUINotifier.upToDateCurrentTasks;
         });
       }
     });
@@ -42,14 +43,13 @@ class _WheelState extends State<Wheel> {
   @override
   void initState() {
     // TODO: implement initState
-    tasks = AppServices.tasksNotifier.tasks;
-    _getRandomNumber();
+    upToDateCurrentTasks =  widget.taskWheelUINotifier.upToDateCurrentTasks;
+    currentTaskType = widget.taskWheelUINotifier.currentTaskType;
     super.initState();
   }
 
+  @override
   void dispose() {
-    // TODO: implement dispose
-    controller.close();
     super.dispose();
   }
 
@@ -58,17 +58,16 @@ class _WheelState extends State<Wheel> {
     return LayoutBuilder(
       builder: (context, constraints) {
         return SizedBox(
-          height: 300,
-          width: 300,
+          height: min(constraints.maxWidth, constraints.maxHeight) ,
+          width: min(constraints.maxWidth, constraints.maxHeight) ,
           child: FortuneWheel(
-            physics: CircularPanPhysics(
-              duration: Duration(seconds: 1),
-              curve: Curves.decelerate,
-              allowOppositeRotationFlung: true,
-            ),
-            onFling: () {
-              _getRandomNumber();
-            },
+            physics: NoPanPhysics(),
+            animateFirst: false,
+            // physics: CircularPanPhysics(
+            //   duration: Duration(seconds: 1),
+            //   curve: Curves.decelerate,
+            //   allowOppositeRotationFlung: true,
+            // ),
             indicators: [
               FortuneIndicator(
                 alignment: Alignment.topCenter,
@@ -78,30 +77,37 @@ class _WheelState extends State<Wheel> {
                 ),
               ),
             ],
-            selected: controller.stream,
+            onFocusItemChanged: (value) {
+              // TODO:: Implement focus item changed logic
+            },
+            selected: widget.taskWheelUINotifier.controller.stream,
             onAnimationEnd: () {
-              AppServices.tasksNotifier.selectedIndex = _selectedIndex;
+              widget.taskWheelUINotifier.onAnimationEnd();
             },
             items:
-                AppServices.tasksNotifier.tasks
+                 widget.taskWheelUINotifier.upToDateCurrentTasks.tasks
                     .asMap() // Converts the list to a map with the index as the key
                     .map(
                       (index, task) => MapEntry(
                         index,
                         FortuneItem(
+                          onTap: () {
+                            dekhao(task.toString());
+                          },
                           style: FortuneItemStyle(
-                            color: AppColors.context(
-                              context,
-                            ).accentColor.withAlpha(
-                              (255 * (index + 1) / tasks.length).round(),
+                            color: AppColors.context(context).primaryColor.withAlpha(
+                              (255 * (index + 1) / upToDateCurrentTasks.tasks.length).round(),
                             ),
                           ),
-                          child: Text(
-                            task.title,
-                            style: Theme.of(
-                              context,
-                            ).textTheme.titleLarge?.copyWith(
-                              color: AppColors.context(context).buttonTextColor,
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              task.title,
+                              style: Theme.of(
+                                context,
+                              ).textTheme.labelLarge?.copyWith(
+                                color: AppColors.context(context).textColor,
+                              ),
                             ),
                           ),
                         ),

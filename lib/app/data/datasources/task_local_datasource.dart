@@ -1,19 +1,25 @@
-import 'package:dartz/dartz.dart';
+import 'dart:convert';
 import 'package:hive/hive.dart';
 
 import '../../../core/helpers/dekhao.dart';
 import '../models/wheel_task_model.dart';
 
 abstract interface class TaskLocalDatasource {
+
   Future<bool> openDb();
+
   Stream<List<WheelTaskModel>> streamWheelTasks();
+
   Future<void> writeTask(WheelTaskModel task);
+
   Future<void> deleteTask(String taskId);
 }
 
+
+
 class TaskHiveImpl implements TaskLocalDatasource {
   final String _boxName = "wheeltasks";
-  Box? _box;
+  Box<dynamic>? _box;
 
   void _checkIfBoxExists() {
     if (_box == null) {
@@ -44,7 +50,7 @@ class TaskHiveImpl implements TaskLocalDatasource {
   @override
   Future<void> writeTask(WheelTaskModel task) async {
     _checkIfBoxExists();
-    await _box!.put(task.id, task);
+    await _box!.put(task.id, task.toMap());
   }
 
   @override
@@ -73,7 +79,7 @@ class TaskHiveImpl implements TaskLocalDatasource {
     final List<WheelTaskModel> tasks = [];
     for (final e in _box!.values) {
       try {
-        final task = WheelTaskModel.fromMap(e);
+        final task = WheelTaskModel.fromMap(jsonDecode((jsonEncode(e))));
         tasks.add(task);
       } catch (e) {
         dekhao("Error while parsing task: $e");

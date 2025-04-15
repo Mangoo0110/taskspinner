@@ -36,10 +36,10 @@ class WheelTaskModel extends WheelTask {
   Map<String, dynamic> toMap() {
     return {
       'id': id,
-      'type': type,
+      'type': type.name,
       'title': title,
       'details': details,
-      'createdAt': createdAt.toString(),
+      'createdAt': createdAt.toIso8601String(),
     };
   }
 }

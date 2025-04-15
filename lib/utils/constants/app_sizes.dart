@@ -38,9 +38,7 @@ class AppSizes {
   static const BorderRadius largeBorderRadius = BorderRadius.all(
     Radius.circular(24.0),
   );
-  static const BorderRadius maxCircularRadius = BorderRadius.all(
-    Radius.circular(100000000),
-  );
+  static BorderRadius maxCircularRadius = BorderRadius.circular(60000000);
 
   // Elevations
   static const double lowElevation = 2.0;

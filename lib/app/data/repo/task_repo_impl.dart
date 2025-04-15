@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import '../../../core/helpers/dekhao.dart';
 import '../models/wheel_task_model.dart';
 import '../../../core/api_handler/trycatch.dart';
 import '../../domain/entities/wheel_task.dart';
@@ -54,6 +55,7 @@ class TaskRepoImpl implements TaskRepo {
   Future<Either<DataCRUDFailure, bool>> openDb() async{
     return await asyncTryCatch<bool>(
       tryFunc: () async{
+        dekhao("calling local db to open.");
         return await _localDatasource.openDb();
       },
     );
