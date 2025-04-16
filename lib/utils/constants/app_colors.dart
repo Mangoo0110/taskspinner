@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:taskspinner/core/notifiers/color_notifier.dart';
 import 'package:taskspinner/core/services/app_services.dart';
 
 class AppColors {
@@ -87,7 +86,7 @@ class AppColors {
       buttonColor = Colors.white,
       buttonContentColor = Colors.black,
       activeButtonContentColor = Colors.white,
-      inActiveButtonContentColor = Colors.grey.shade700,
+      inActiveButtonContentColor = Colors.grey.shade500,
       inActiveButtonColor = Colors.grey.shade900,
       drawerColor = Colors.black,
       fillColor = Colors.transparent,

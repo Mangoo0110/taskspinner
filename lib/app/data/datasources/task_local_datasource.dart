@@ -56,7 +56,7 @@ class TaskHiveImpl implements TaskLocalDatasource {
   @override
   Future<void> deleteTask(String taskId) async {
     _checkIfBoxExists();
-    await _box!.delete(taskId);
+    return await _box!.delete(taskId);
   }
 
   Stream<BoxEvent> _watchBoxChanges() {
@@ -68,7 +68,8 @@ class TaskHiveImpl implements TaskLocalDatasource {
     _checkIfBoxExists();
 
     yield await _getWheelTasks(); // Emit initial state
-    await for (final _ in _watchBoxChanges()) {
+    await for (final event in _watchBoxChanges()) {
+      dekhao("Box changed: ${event.key} ${event.toString()}");
       yield await _getWheelTasks(); // Emit updated list on each change
     }
   }

@@ -1,6 +1,8 @@
 import '../../../core/commons/enums/tasktype.dart';
 
 class WheelTask {
+  bool _isDummy = false;
+  bool get isDummy => _isDummy;
   final String id;
   final TaskType type;
   final String title;
@@ -15,9 +17,29 @@ class WheelTask {
     required this.createdAt,
   });
 
+  static List<WheelTask> get dummies => [
+    WheelTask(
+      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      type: TaskType.easy,
+      title: "Relax",
+      details: "Only chill",
+      createdAt: DateTime.now(),
+    )
+    .._isDummy = true,
+
+    WheelTask(
+      id: DateTime.now().add(Duration(milliseconds: 20)).millisecondsSinceEpoch.toString(),
+      type: TaskType.easy,
+      title: "Exercise",
+      details: "Start with a walk, then stretch, then do some yoga",
+      createdAt: DateTime.now(),
+    )
+    .._isDummy = true,
+  ];
+
   @override
   String toString() {
-    return 'Task{id: $id, title: $title, details: $details}';
+    return 'Task{id: $id, title: $title, details: $details, isDummy: $_isDummy}';
   }
 
   @override

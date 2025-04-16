@@ -33,15 +33,15 @@ base class UpToDateCurrentTasks {
 
 class TaskWheelUINotifier extends ChangeNotifier {
 
-  TaskWheelUINotifier({required this.controller, required this.tasksNotifier}){
-    _upToDateCurrentTasks = UpToDateCurrentTasks(tasksNotifier.easyTasks);
-    tasksNotifier.addListener(() {
+  TaskWheelUINotifier({required this.controller, required this.tasksDataProvider}){
+    _upToDateCurrentTasks = UpToDateCurrentTasks(tasksDataProvider.easyTasks);
+    tasksDataProvider.addListener(() {
       _setUpToDateCurrentTasks();
     });
   }
 
   final StreamController<int> controller;
-  final TasksDataProvider tasksNotifier;
+  final TasksDataProvider tasksDataProvider;
   bool _isSpinning = false;
   bool get isSpinning => _isSpinning;
 
@@ -69,22 +69,7 @@ class TaskWheelUINotifier extends ChangeNotifier {
     notifyListeners();
   }
 
-  static List<WheelTask> _dummyTasks = [
-    WheelTask(
-      id: Uuid().v1(),
-      type: TaskType.easy,
-      title: "Relax",
-      details: "Only chill",
-      createdAt: DateTime.now(),
-    ),
-    WheelTask(
-      id: Uuid().v1(),
-      type: TaskType.easy,
-      title: "Exercise",
-      details: "Start with a walk, then stretch, then do some yoga",
-      createdAt: DateTime.now(),
-    ),
-  ];
+  static final List<WheelTask> _dummyTasks = WheelTask.dummies;
   
 
   UpToDateCurrentTasks _upToDateCurrentTasks = UpToDateCurrentTasks(_dummyTasks);
@@ -94,15 +79,16 @@ class TaskWheelUINotifier extends ChangeNotifier {
     
     List<WheelTask> tasks = [];
     if (_currentTaskType == TaskType.easy) {
-      tasks = tasksNotifier.easyTasks.isEmpty || tasksNotifier.easyTasks.length < 2 ? _dummyTasks : tasksNotifier.easyTasks;
+      tasks = tasksDataProvider.easyTasks.isEmpty || tasksDataProvider.easyTasks.length < 2 ? _dummyTasks : tasksDataProvider.easyTasks;
     } else if (_currentTaskType == TaskType.medium) {
-      tasks = tasksNotifier.mediumTasks.isEmpty || tasksNotifier.mediumTasks.length < 2 ? _dummyTasks : tasksNotifier.mediumTasks;
+      tasks = tasksDataProvider.mediumTasks.isEmpty || tasksDataProvider.mediumTasks.length < 2 ? _dummyTasks : tasksDataProvider.mediumTasks;
     } else if (_currentTaskType == TaskType.hard) {
-      tasks = tasksNotifier.hardTasks.isEmpty || tasksNotifier.hardTasks.length < 2 ? _dummyTasks : tasksNotifier.hardTasks;
+      tasks = tasksDataProvider.hardTasks.isEmpty || tasksDataProvider.hardTasks.length < 2 ? _dummyTasks : tasksDataProvider.hardTasks;
     } else {
       tasks = _dummyTasks;
     }
     _upToDateCurrentTasks = UpToDateCurrentTasks(tasks);
+    notifyListeners();
   }
 
   WheelTask? _luckyTask;

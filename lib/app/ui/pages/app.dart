@@ -3,9 +3,9 @@ import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:taskspinner/app/ui/controllers/task_wheel_ui_notifier.dart';
-import 'package:taskspinner/app/ui/widgets/add_task_popup.dart';
+import 'package:taskspinner/app/ui/widgets/edit_stask_popup.dart';
 import 'package:taskspinner/app/ui/widgets/bottom_middle_button.dart';
-import 'package:taskspinner/app/ui/widgets/settings_popup.dart';
+import 'package:taskspinner/core/features/settings/presentation/pages/settings_popup.dart';
 import 'package:taskspinner/app/ui/widgets/task_list_popup.dart';
 import 'package:taskspinner/core/commons/enums/tasktype.dart';
 import 'package:taskspinner/core/services/app_services.dart';
@@ -31,7 +31,7 @@ class _SpinnerTaskAppState extends State<SpinnerTaskApp> {
 
   static TaskWheelUINotifier taskWheelUINotifier = TaskWheelUINotifier(
     controller: controller,
-    tasksNotifier: AppServices.tasksProvider
+    tasksDataProvider: AppServices.tasksProvider
   );
 
   @override
@@ -63,7 +63,7 @@ class _SpinnerTaskAppState extends State<SpinnerTaskApp> {
                 ),
                 
                 Positioned(
-                  top: 50,
+                  top:  constraints.maxHeight / 4.2 - 130,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
@@ -77,12 +77,16 @@ class _SpinnerTaskAppState extends State<SpinnerTaskApp> {
                 ),
 
                 Positioned(
-                  top: constraints.maxHeight / 5,
+                  top: constraints.maxHeight / 4.2,
                   child: SizedBox(
                     width: constraints.maxWidth,
                     height: 370,
                     //color: Colors.white,
-                    child: Center(child: Wheel(taskWheelUINotifier: taskWheelUINotifier,)),
+                    child: Center(
+                      child: Wheel(
+                        taskWheelUINotifier: taskWheelUINotifier,
+                        tasksDataProvider: AppServices.tasksProvider,
+                      )),
                   ),
                 ),
 
@@ -116,7 +120,7 @@ class _SpinnerTaskAppState extends State<SpinnerTaskApp> {
               TableRow(
                 children: [
                   Hero(
-                    tag: "Spinner_Add",
+                    tag: "AddTaskPopup",
                     child: _bottomSideButton(
                       icon: Icons.create,
                       onTap: () {
@@ -183,7 +187,9 @@ class _SpinnerTaskAppState extends State<SpinnerTaskApp> {
         opaque: false,
         barrierDismissible: true,
         pageBuilder: (_, __, ___) {
-        return SettingsPopup();
+        return SettingsPopup(
+          settingsDataProvider: AppServices.settingsDataProvider,
+        );
       },
     ));
   }
@@ -194,7 +200,7 @@ class _SpinnerTaskAppState extends State<SpinnerTaskApp> {
         opaque: false,
         barrierDismissible: true,
         pageBuilder: (_, __, ___) {
-          return AddTaskPopup(tasksNotifier: AppServices.tasksProvider, taskWheelUINotifier: taskWheelUINotifier);
+          return EditTaskPopup(tasksDataProvider: AppServices.tasksProvider, taskWheelUINotifier: taskWheelUINotifier);
       },
     ));
   }

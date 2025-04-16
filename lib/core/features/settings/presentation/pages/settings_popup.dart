@@ -3,14 +3,14 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:taskspinner/core/commons/widgets/custom_button.dart';
 import 'package:taskspinner/utils/constants/app_colors.dart';
-import '../../../core/features/settings/presentation/notifiers/settings_data_provider.dart';
-import '../../../core/services/app_services.dart';
-import '../../../utils/constants/app_sizes.dart';
+import '../notifiers/settings_data_provider.dart';
+import '../../../../../utils/constants/app_sizes.dart';
 
 
 
 class SettingsPopup extends StatelessWidget {
-  const SettingsPopup({super.key});
+  final SettingsDataProvider settingsDataProvider;
+  const SettingsPopup({super.key, required this.settingsDataProvider});
 
   @override
   Widget build(BuildContext context) {
@@ -63,11 +63,11 @@ class SettingsPopup extends StatelessWidget {
                                 ],
                               ),
                               const SizedBox(height: 40),
-                              const SelectThemeMode(),
+                              SelectThemeMode(settingsDataProvider: settingsDataProvider,),
                               const SizedBox(height: 20),
-                              const SelectColorMode(),
+                              SelectColorMode(settingsDataProvider: settingsDataProvider),
                               const SizedBox(height: 20),
-                              const UploadBackgroundImage(),
+                              UploadBackgroundImage(settingsDataProvider: settingsDataProvider,),
                               const SizedBox(height: 20),
                             ],
                           ),
@@ -89,7 +89,8 @@ class SettingsPopup extends StatelessWidget {
 
 
 class SelectThemeMode extends StatefulWidget {
-  const SelectThemeMode({super.key});
+  final SettingsDataProvider settingsDataProvider;
+  const SelectThemeMode({super.key, required this.settingsDataProvider});
 
   @override
   State<SelectThemeMode> createState() => _SelectThemeModeState();
@@ -102,7 +103,7 @@ class _SelectThemeModeState extends State<SelectThemeMode> {
   Future<void> _saveAppearence({
     required ThemeMode themeMode,
   }) async {
-    await AppServices.settingsDataProvider.saveAppearence(
+    await widget.settingsDataProvider.saveAppearence(
         themeMode: themeMode,
         assetBackgroundImagePath: null,
         onError: (err){
@@ -118,10 +119,10 @@ class _SelectThemeModeState extends State<SelectThemeMode> {
   void didChangeDependencies() {
     // TODO: implement didChangeDependencies
 
-    _selectedMode = AppServices.settingsDataProvider.currentAppearence.themeMode;
-    AppServices.settingsDataProvider.addListener(() {
-      if(mounted && context.mounted && _selectedMode != AppServices.settingsDataProvider.currentAppearence.themeMode) {
-        _selectedMode = AppServices.settingsDataProvider.currentAppearence.themeMode;
+    _selectedMode = widget.settingsDataProvider.currentAppearence.themeMode;
+    widget.settingsDataProvider.addListener(() {
+      if(mounted && context.mounted && _selectedMode != widget.settingsDataProvider.currentAppearence.themeMode) {
+        _selectedMode = widget.settingsDataProvider.currentAppearence.themeMode;
         setState(() {
           
         });
@@ -133,7 +134,7 @@ class _SelectThemeModeState extends State<SelectThemeMode> {
   @override
   void initState() {
     // TODO: implement initState
-    _selectedMode = AppServices.settingsDataProvider.currentAppearence.themeMode;
+    _selectedMode = widget.settingsDataProvider.currentAppearence.themeMode;
     super.initState();
   }
 
@@ -203,7 +204,8 @@ class _SelectThemeModeState extends State<SelectThemeMode> {
 
 
 class SelectColorMode extends StatefulWidget {
-  const SelectColorMode({super.key});
+  final SettingsDataProvider settingsDataProvider;
+  const SelectColorMode({super.key, required this.settingsDataProvider});
 
   @override
   State<SelectColorMode> createState() => _SelectColorModeState();
@@ -216,7 +218,7 @@ class _SelectColorModeState extends State<SelectColorMode> {
   Future<void> _saveAppearence({
     required PrimaryColorMode primaryColorMode,
   }) async {
-    await AppServices.settingsDataProvider.saveAppearence(
+    await widget.settingsDataProvider.saveAppearence(
         themeMode: null,
         primaryColorMode: primaryColorMode,
         assetBackgroundImagePath: null,
@@ -233,10 +235,10 @@ class _SelectColorModeState extends State<SelectColorMode> {
   void didChangeDependencies() {
     // TODO: implement didChangeDependencies
 
-    _currentColorMode = AppServices.settingsDataProvider.currentAppearence.primaryColorMode;
-    AppServices.settingsDataProvider.addListener(() {
-      if(mounted && context.mounted && _currentColorMode != AppServices.settingsDataProvider.currentAppearence.primaryColorMode) {
-        _currentColorMode = AppServices.settingsDataProvider.currentAppearence.primaryColorMode;
+    _currentColorMode = widget.settingsDataProvider.currentAppearence.primaryColorMode;
+    widget.settingsDataProvider.addListener(() {
+      if(mounted && context.mounted && _currentColorMode != widget.settingsDataProvider.currentAppearence.primaryColorMode) {
+        _currentColorMode = widget.settingsDataProvider.currentAppearence.primaryColorMode;
       }
     });
     super.didChangeDependencies();
@@ -245,14 +247,14 @@ class _SelectColorModeState extends State<SelectColorMode> {
   @override
   void initState() {
     // TODO: implement initState
-    _currentColorMode = AppServices.settingsDataProvider.currentAppearence.primaryColorMode;
+    _currentColorMode = widget.settingsDataProvider.currentAppearence.primaryColorMode;
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
 
-    _currentColorMode = AppServices.settingsDataProvider.currentAppearence.primaryColorMode;
+    _currentColorMode = widget.settingsDataProvider.currentAppearence.primaryColorMode;
     return LayoutBuilder(
       builder: (context, constraints) {
         return Column(
@@ -301,7 +303,8 @@ class _SelectColorModeState extends State<SelectColorMode> {
 
 
 class UploadBackgroundImage extends StatefulWidget {
-  const UploadBackgroundImage({super.key});
+  final SettingsDataProvider settingsDataProvider;
+  const UploadBackgroundImage({super.key, required this.settingsDataProvider});
 
   @override
   State<UploadBackgroundImage> createState() => _UploadBackgroundImageState();
@@ -321,7 +324,7 @@ class _UploadBackgroundImageState extends State<UploadBackgroundImage> {
   Future<void> _saveAppearence({
     required String assetBackgroundImagePath,
   }) async {
-    await AppServices.settingsDataProvider.saveAppearence(
+    await widget.settingsDataProvider.saveAppearence(
         assetBackgroundImagePath: assetBackgroundImagePath,
       );
   }
@@ -330,10 +333,10 @@ class _UploadBackgroundImageState extends State<UploadBackgroundImage> {
   void didChangeDependencies() {
     // TODO: implement didChangeDependencies
 
-    _selectedImagePath = AppServices.settingsDataProvider.currentAppearence.assetBackgroundImagePath;
-    AppServices.settingsDataProvider.addListener(() {
-      if(mounted && context.mounted && _selectedImagePath != AppServices.settingsDataProvider.currentAppearence.assetBackgroundImagePath) {
-        _selectedImagePath = AppServices.settingsDataProvider.currentAppearence.assetBackgroundImagePath;
+    _selectedImagePath = widget.settingsDataProvider.currentAppearence.assetBackgroundImagePath;
+    widget.settingsDataProvider.addListener(() {
+      if(mounted && context.mounted && _selectedImagePath != widget.settingsDataProvider.currentAppearence.assetBackgroundImagePath) {
+        _selectedImagePath = widget.settingsDataProvider.currentAppearence.assetBackgroundImagePath;
         setState(() {
           
         });

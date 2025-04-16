@@ -2,6 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:taskspinner/core/helpers/dekhao.dart';
 import '../constants/app_colors.dart';
+import 'appbar_theme.dart';
+import 'bottom_appbar_theme.dart';
 import 'text_theme.dart';
 
 class AppTheme {
@@ -27,13 +29,15 @@ class AppTheme {
       scaffoldBackgroundColor: AppColors.light().backgroundColor,
       primaryColor: AppColors.light().primaryColor,
       textTheme: DTextTheme.lightTextTheme,
+      //appBarTheme: DAppBarTheme.lightAppBarTheme,
+      //bottomAppBarTheme: DBottomAppBarTheme.lightBottomAppBarTheme,
       //inputDecorationTheme: DInputDecorationTheme.lightTheme,
       // iconTheme: DIconTheme.lightIconTheme,
-      // appBarTheme: DAppBarTheme.lightAppBarTheme,
+      
       // buttonTheme: DButtonTheme.lightButtonTheme,
       // bottomSheetTheme: DBottomSheetTheme.lightBottomSheetTheme,
       // checkboxTheme: DCheckboxTheme.lightCheckboxTheme,
-      // bottomAppBarTheme: DBottomAppBarTheme.lightBottomAppBarTheme,
+      
       // cardTheme: DCardTheme.lightCardTheme,
       // bottomNavigationBarTheme: DBottomNavigationBarThemes.lightBottomNavTheme,
       // tabBarTheme: DTabBarTheme.lightTabBarTheme,
@@ -60,13 +64,15 @@ class AppTheme {
       scaffoldBackgroundColor: AppColors.dark().backgroundColor,
       primaryColor: AppColors.dark().primaryColor,
       textTheme: DTextTheme.darkTextTheme,
+      //appBarTheme: DAppBarTheme.darkAppBarTheme,
+      //bottomAppBarTheme: DBottomAppBarTheme.darkBottomAppBarTheme,
       // inputDecorationTheme: DInputDecorationTheme.darkTheme,
       // iconTheme: DIconTheme.darkIconTheme,
-      // appBarTheme: DAppBarTheme.darkAppBarTheme,
+      
       // buttonTheme: DButtonTheme.darkButtonTheme,
       // bottomSheetTheme: DBottomSheetTheme.darkBottomSheetTheme,
       // checkboxTheme: DCheckboxTheme.darkCheckboxTheme,
-      // bottomAppBarTheme: DBottomAppBarTheme.darkBottomAppBarTheme,
+      
       // cardTheme: DCardTheme.darkCardTheme,
       // tabBarTheme: DTabBarTheme.darkTabBarTheme,
       // bottomNavigationBarTheme: DBottomNavigationBarThemes.darkBottomNavTheme,

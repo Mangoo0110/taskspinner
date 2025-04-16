@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 import '../../../core/commons/enums/tasktype.dart';
 import '../../../core/helpers/dekhao.dart';
+import '../../../core/notifiers/button_status_notifier.dart';
 import '../../domain/usecases/opendb.dart';
 import '../../../core/usecases/usecases.dart';
 import '../../../init_dependencies.dart';
@@ -27,8 +28,7 @@ mixin class TasksDBActions {
     required String title, 
     required String details, 
     required TaskType currentTaskType,
-    required void Function(String errMessage) onError,
-    required VoidCallback onDone,
+    required ButtonStatusNotifier buttonStatusNotifier,
   }) async { 
     
     title = title.trim();
@@ -46,10 +46,19 @@ mixin class TasksDBActions {
       details: details,
       createdAt: DateTime.now(),
     );
-
-    return await serviceLocator<WriteTask>().call(task).then((rl) {
-      return rl.fold((l) => onError(l.message), (r) => onDone());
+    // Set the button status to loading
+    buttonStatusNotifier.setStatus(LoadingStatus(message: "Adding task..."));
+    // Simulate a delay for the loading status
+    return Future.delayed(const Duration(milliseconds: 1000), () {}).then((_) async{
+        return await serviceLocator<WriteTask>().call(task).then((rl) {
+          return rl.fold((l) {
+            buttonStatusNotifier.setStatus(ErrorStatus(message: l.message));
+          }, (r) {
+            buttonStatusNotifier.setStatus(SuccessStatus(message: "Task added successfully!"));
+          });
+        });
     });
+
   }
 
   Future<void> updateTask({
@@ -57,8 +66,7 @@ mixin class TasksDBActions {
     required String title, 
     required String details, 
     required TaskType currentTaskType,
-    required void Function(String errMessage) onError,
-    required VoidCallback onDone,
+    required ButtonStatusNotifier buttonStatusNotifier,
   }) async { 
     
     title = title.trim();
@@ -76,20 +84,37 @@ mixin class TasksDBActions {
       details: details,
       createdAt: DateTime.now(),
     );
-
-    return await serviceLocator<WriteTask>().call(task).then((rl) {
-      return rl.fold((l) => onError(l.message), (r) => onDone());
+    // Set the button status to loading
+    buttonStatusNotifier.setStatus(LoadingStatus(message: "Updating task..."));
+    // Simulate a delay for the loading status
+    return Future.delayed(const Duration(milliseconds: 1000), () {}).then((_) async{
+      return await serviceLocator<WriteTask>().call(task).then((rl) {
+          return rl.fold((l) {
+            buttonStatusNotifier.setStatus(ErrorStatus(message: l.message));
+          }, (r) {
+            buttonStatusNotifier.setStatus(SuccessStatus(message: "Task updated successfully!"));
+          });
+        });
     });
+
+    
   }
 
   Future<void> deleteTask({
     required String id,
-    required void Function(String errMessage) onError,
-    required VoidCallback onDone,
+    required ButtonStatusNotifier buttonStatusNotifier,
   }) async {
-    return await serviceLocator<DeleteTask>().call(id).then((rl) {
-      return rl.fold((l) => onError(l.message), (r) => onDone());
+    buttonStatusNotifier.setStatus(LoadingStatus(message: "Updating task..."));
+    Future.delayed(const Duration(milliseconds: 1000), () {}).then((_) async{
+        return await serviceLocator<DeleteTask>().call(id).then((rl) {
+          return rl.fold((l) {
+            buttonStatusNotifier.setStatus(ErrorStatus(message: l.message));
+          }, (r) {
+            buttonStatusNotifier.setStatus(SuccessStatus(message: "Task deleted successfully!"));
+          });
+        });
     });
+    
   }
 
   Future<void> streamWheelTasks({

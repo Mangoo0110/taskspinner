@@ -41,9 +41,6 @@ class TasksDataProvider extends ChangeNotifier with TasksDBActions{
     _easyTasks.clear();
     _mediumTasks.clear();
     _hardTasks.clear();
-    // Notify task data listeners.
-    notifyListeners();
-
     // Update with updated data.
     for(final task in tasks) {
       switch (task.type) {

@@ -36,17 +36,17 @@ enum PrimaryColorMode {
   Color get color {
     switch (this) {
       case PrimaryColorMode.red:
-        return Colors.redAccent;
+        return Colors.redAccent.shade400;
       case PrimaryColorMode.green:
         return Colors.lightGreenAccent;
       case PrimaryColorMode.blue:
         return Colors.blueAccent;
       case PrimaryColorMode.yellow:
-        return Colors.yellowAccent;
+        return Colors.lime;
       case PrimaryColorMode.pink:
         return Colors.pinkAccent;
       case PrimaryColorMode.purple:
-        return Colors.purpleAccent;
+        return Colors.deepPurpleAccent;
       case PrimaryColorMode.orange:
         return Colors.deepOrangeAccent;
       case PrimaryColorMode.teal:
