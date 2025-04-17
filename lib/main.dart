@@ -42,17 +42,17 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
 
   int _cnt = 0;
-  ThemeMode _themeMode = AppServices.settingsDataProvider.currentAppearence.themeMode;
-  PrimaryColorMode _primaryColorMode = AppServices.settingsDataProvider.currentAppearence.primaryColorMode;
+  ThemeMode _themeMode = AppServices.settingsDataProvider.currentSetting.themeMode;
+  PrimaryColorMode _primaryColorMode = AppServices.settingsDataProvider.currentSetting.primaryColorMode;
 
   @override
   void didChangeDependencies() {
 
     AppServices.settingsDataProvider.addListener(() {
       dekhao("appearence changed. calling setState()");
-      if (mounted && context.mounted && (_themeMode != AppServices.settingsDataProvider.currentAppearence.themeMode || _primaryColorMode != AppServices.settingsDataProvider.currentAppearence.primaryColorMode)) {
-        _themeMode = AppServices.settingsDataProvider.currentAppearence.themeMode;
-        _primaryColorMode = AppServices.settingsDataProvider.currentAppearence.primaryColorMode;
+      if (mounted && context.mounted && (_themeMode != AppServices.settingsDataProvider.currentSetting.themeMode || _primaryColorMode != AppServices.settingsDataProvider.currentSetting.primaryColorMode)) {
+        _themeMode = AppServices.settingsDataProvider.currentSetting.themeMode;
+        _primaryColorMode = AppServices.settingsDataProvider.currentSetting.primaryColorMode;
         setState(() {});
       }
     });
@@ -68,7 +68,7 @@ class _MyAppState extends State<MyApp> {
       title: 'Task Spinner',
       theme: AppTheme().lightTheme,
       darkTheme: AppTheme().darkTheme,
-      themeMode: AppServices.settingsDataProvider.currentAppearence.themeMode,
+      themeMode: AppServices.settingsDataProvider.currentSetting.themeMode,
       home: const SpinnerTaskApp(),
     );
   }

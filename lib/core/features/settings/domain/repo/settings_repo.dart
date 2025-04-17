@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import '../../../../api_handler/failure.dart';
 import '../../../../api_handler/success.dart';
 import '../../presentation/notifiers/settings_data_provider.dart';
-import '../entity/appearence.dart';
+import '../entity/setting.dart';
 
 
 
@@ -16,16 +16,18 @@ abstract interface class SettingsRepo {
   /// [appearence] is the appearance settings to be saved.
   /// Throws [Exception] if the database is not opened.
   /// [openDb] must be called before this method.
-  Future<Either<DataCRUDFailure, Success>> saveAppearence({
-    required Appearence defaultAppearence,
+  Future<Either<DataCRUDFailure, Success>> saveSetting({
+    required Setting defaultAppearence,
     required ThemeMode? themeMode,
     required PrimaryColorMode? primaryColorMode,
     required String? assetBackgroundImagePath,
+    required bool? tickSound,
+    required bool? hapticImpact,
   });
   
   /// Stream the appearance settings.
-  /// Returns a [Stream] of [Appearence] objects.
+  /// Returns a [Stream] of [Setting] objects.
   /// [openDb] must be called before this method.
   /// Throws [Exception] if the database is not opened.
-  Either<DataCRUDFailure, Stream<Appearence>> streamAppearence();
+  Either<DataCRUDFailure, Stream<Setting>> streamSetting();
 }

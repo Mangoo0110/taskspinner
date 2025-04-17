@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:taskspinner/core/features/settings/domain/entity/appearence.dart';
+import 'package:taskspinner/core/features/settings/domain/entity/setting.dart';
 
 import 'appearence_notifier.dart';
 import '../../../../helpers/dekhao.dart';
@@ -98,30 +98,30 @@ enum PrimaryColorMode {
 
 class SettingsDataProvider extends ChangeNotifier with SettingsDBActions{
 
-  StreamSubscription? _appearenceStreamSubscription;
+  StreamSubscription? _settingStreamSubscription;
 
-  Appearence _currentAppearence = Appearence.defaultAppearence();
-  Appearence get currentAppearence => _currentAppearence;
+  Setting _currentSetting = Setting.defaultSetting();
+  Setting get currentSetting => _currentSetting;
 
 
-  void _setCurrentAppearence(Appearence appearence) {
-    if(_currentAppearence == appearence) return;
+  void _setCurrentSetting(Setting setting) {
+    if(_currentSetting == setting) return;
 
-    _currentAppearence = appearence;
+    _currentSetting = setting;
     notifyListeners();
   }
 
 
-  Future<void> _streamAppearence() async{
+  Future<void> _streamSetting() async{
     await openDb(onError: (err){}, onDone: (){}).then((_) {
       streamAppearence(
         onError: (err){}, 
         onData: (stream){
-          _appearenceStreamSubscription = stream.listen(
+          _settingStreamSubscription = stream.listen(
             (appearence) {
               dekhao(appearence.toString());
-              _setCurrentAppearence(appearence);
-              dekhao("Appearence updated");
+              _setCurrentSetting(appearence);
+              dekhao("Setting updated");
             }
           );
         });
@@ -129,16 +129,16 @@ class SettingsDataProvider extends ChangeNotifier with SettingsDBActions{
   }
 
   ///### * Opens SETTINGS Local DB
-  ///#### * Streams Appearence
-  ///##### * Sets current Appearence
+  ///#### * Streams Setting
+  ///##### * Sets current Setting
   Future<void> init() async{
-    await _streamAppearence();
+    await _streamSetting();
   }
 
   @override
   void dispose() async{
     // TODO: implement dispose
-    await _appearenceStreamSubscription?.cancel();
+    await _settingStreamSubscription?.cancel();
     super.dispose();
   }
 }

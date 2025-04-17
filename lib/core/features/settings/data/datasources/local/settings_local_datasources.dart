@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
-import 'package:taskspinner/core/features/settings/data/models/appearence_model.dart';
+import 'package:taskspinner/core/features/settings/data/models/setting_model.dart';
 
 import '../../../../../helpers/dekhao.dart';
 import '../../../presentation/notifiers/settings_data_provider.dart';
@@ -10,19 +10,21 @@ abstract interface class SettingsLocalDatasource {
   Future<bool> openDb();
 
 
-  Future<void> saveAppearence({
-    required AppearenceModel defaultAppearence,
+  Future<void> saveSetting({
+    required SettingModel defaultSetting,
     required ThemeMode? themeMode,
     required PrimaryColorMode? primaryColorMode,
     required String? assetBackgroundImagePath,
+    required bool? tickSound,
+    required bool? hapticImpact,
   });
 
-  Stream<AppearenceModel> streamAppearence();
+  Stream<SettingModel> streamSetting();
 }
 
 class SettingsHiveImpl implements SettingsLocalDatasource {
   final String _boxName = "app_settings";
-  final String _appearenceKey = "appearence";
+  final String _onlyDataKey = "setting_key@mangoo0110";
   Box<dynamic>? _box;
 
   void _checkIfBoxExists() {
@@ -56,17 +58,17 @@ class SettingsHiveImpl implements SettingsLocalDatasource {
   }
 
   @override
-  Stream<AppearenceModel> streamAppearence() async* {
+  Stream<SettingModel> streamSetting() async* {
     _checkIfBoxExists();
 
-    var model = await _getAppearence(); 
+    var model = await _getSetting(); 
     if(model != null) {
       yield model; // Emit initial state
     }
 
     await for (final event in _watchBoxChanges()) {
-      if (event.key == _appearenceKey) {
-        model = await _getAppearence(); 
+      if (event.key == _onlyDataKey) {
+        model = await _getSetting(); 
         if(model != null) {
           yield model; // Emit updated state
         }
@@ -74,57 +76,62 @@ class SettingsHiveImpl implements SettingsLocalDatasource {
     }
   }
 
-  Future<AppearenceModel?> _getAppearence() async {
+  Future<SettingModel?> _getSetting() async {
     _checkIfBoxExists();
 
-    final raw = await _box?.get("appearence");
+    final raw = await _box?.get(_onlyDataKey);
     if(raw == null) {
-      dekhao("No appearence found");
+      dekhao("Setting not found!");
+      //throw Exception("Setting not found!");
       return null;
     }
-    return AppearenceModel.fromMap(jsonDecode(jsonEncode(raw)));
+    return SettingModel.fromMap(jsonDecode(jsonEncode(raw)));
   }
 
 
-  Future<void> _saveAppearence(AppearenceModel appearence) async {
+  Future<void> _saveSetting(SettingModel setting) async {
     _checkIfBoxExists();
-    dekhao("Saving appearence to local db");
-    await _box?.put(appearence.id, appearence.toMap());
+    dekhao("Saving setting to local db");
+    return await _box?.put(_onlyDataKey, setting.toMap());
   }
 
 
   @override
-  Future<void> saveAppearence({
-    required AppearenceModel defaultAppearence,
+  Future<void> saveSetting({
+    required SettingModel defaultSetting,
     required ThemeMode? themeMode,
     required PrimaryColorMode? primaryColorMode,
     required String? assetBackgroundImagePath,
+    required bool? tickSound,
+    required bool? hapticImpact,
   }) async {
 
     _checkIfBoxExists();
 
     try {
-      await _getAppearence().then((appearence) async{
-        if(appearence != null) {
-          await _saveAppearence(
-            AppearenceModel.fromEntity(
-            appearence!.copyWith(
+      await _getSetting().then((setting) async{
+        if(setting != null) {
+          await _saveSetting(
+            SettingModel.fromEntity(
+            setting.copyWith(
               themeMode: themeMode,
               primaryColorMode: primaryColorMode,
               assetBackgroundImagePath: assetBackgroundImagePath,
+              hapticImpact: hapticImpact,
+              tickSound: tickSound
             ))
           );
         } else {
           dekhao("Data not found, creating new one");
-          await _saveAppearence(
-            defaultAppearence
+          await _saveSetting(
+            defaultSetting
           );
         }
       });
     } catch (e) {
       dekhao("Data not found, creating new one $e");
-      await _saveAppearence(
-        defaultAppearence
+      await _saveSetting(
+        defaultSetting
       );
     }
     

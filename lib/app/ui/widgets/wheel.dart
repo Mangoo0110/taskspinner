@@ -1,20 +1,24 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_fortune_wheel/flutter_fortune_wheel.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:taskspinner/app/ui/controllers/task_wheel_ui_notifier.dart';
 import 'package:taskspinner/app/ui/controllers/tasks_data_provider.dart';
 import 'package:taskspinner/app/ui/widgets/edit_stask_popup.dart';
 import 'package:taskspinner/core/commons/enums/tasktype.dart';
+import 'package:taskspinner/core/features/settings/domain/entity/setting.dart';
+import '../../../core/features/settings/presentation/notifiers/settings_data_provider.dart';
 import 'package:taskspinner/core/helpers/dekhao.dart';
 import 'package:taskspinner/utils/constants/app_colors.dart';
 
 
 class Wheel extends StatefulWidget {
   final TasksDataProvider tasksDataProvider;
+  final SettingsDataProvider settingsDataProvider;
   final TaskWheelUINotifier taskWheelUINotifier;
-  const Wheel({super.key, required this.taskWheelUINotifier, required this.tasksDataProvider});
+  const Wheel({super.key, required this.taskWheelUINotifier, required this.tasksDataProvider, required this.settingsDataProvider});
 
   @override
   State<Wheel> createState() => _WheelState();
@@ -25,6 +29,8 @@ class _WheelState extends State<Wheel> {
 
   late TaskType currentTaskType;
   late UpToDateCurrentTasks upToDateCurrentTasks;
+
+  late Setting setting;
 
 
   @override
@@ -40,13 +46,32 @@ class _WheelState extends State<Wheel> {
         });
       }
     });
+
+
+    // Listen to tickSound and haptic impact setting change
+
+    widget.settingsDataProvider.addListener(() {
+      dekhao("data changed in task notifier");
+      setting = widget.settingsDataProvider.currentSetting;
+    });
     super.didChangeDependencies();
   }
 
-  Future<void> playTick() async{
-    //dekhao("ticker count ${_tickerCount}");
-    await _player.seek(Duration.zero); // rewind
-    await _player.play();              // fire-and-forget
+  Future<void> giveFeedback() async{
+    try {
+      if(setting.tickSound) {
+        dekhao("ticking..");
+        await _player.seek(Duration.zero); // rewind
+        await _player.play();              // fire-and-forget
+      }
+
+      if(setting.hapticImpact) {
+        HapticFeedback.heavyImpact();
+      }
+    } catch (e) {
+      dekhao("");
+    }
+    
   }
 
   late final AudioPlayer _player;
@@ -57,6 +82,7 @@ class _WheelState extends State<Wheel> {
   void initState() {
     upToDateCurrentTasks =  widget.taskWheelUINotifier.upToDateCurrentTasks;
     currentTaskType = widget.taskWheelUINotifier.currentTaskType;
+    setting = widget.settingsDataProvider.currentSetting;
     
     _player = AudioPlayer();
 
@@ -67,6 +93,7 @@ class _WheelState extends State<Wheel> {
 
   @override
   void dispose() {
+    _player.dispose();
     super.dispose();
   }
 
@@ -91,12 +118,16 @@ class _WheelState extends State<Wheel> {
               ),
             ],
             onFocusItemChanged: (value) {
+              dekhao("Throw feedback");
+               giveFeedback();
               // if(_tickerCount % 3 == 0) playTick();
               // _tickerCount++;
             },
             selected: widget.taskWheelUINotifier.controller.stream,
             onAnimationEnd: () {
+              giveFeedback();
               widget.taskWheelUINotifier.onAnimationEnd();
+              
             },
             
             items:

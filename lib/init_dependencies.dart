@@ -81,7 +81,7 @@ void _settingsServiceDI() {
 
   //::: Usecases
   serviceLocator.registerLazySingleton(
-    () => SaveAppearence(serviceLocator<SettingsRepo>()),
+    () => SaveSetting(serviceLocator<SettingsRepo>()),
   );
   serviceLocator.registerLazySingleton(
     () => StreamAppearence(serviceLocator<SettingsRepo>()),

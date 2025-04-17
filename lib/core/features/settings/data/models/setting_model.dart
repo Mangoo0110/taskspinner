@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 
-import '../../domain/entity/appearence.dart';
-import '../../presentation/notifiers/appearence_notifier.dart';
+import '../../domain/entity/setting.dart';
 import '../../presentation/notifiers/settings_data_provider.dart';
 
-
 extension ToThemeMode on String {
-
   ThemeMode toThemeMode() {
     switch (toLowerCase()) {
       case "light":
@@ -17,26 +14,36 @@ extension ToThemeMode on String {
         return ThemeMode.system;
     }
   }
-
 }
 
+class SettingModel extends Setting {
+  SettingModel({
+    required super.themeMode,
+    required super.primaryColorMode,
+    required super.assetBackgroundImagePath,
+    required super.hapticImpact,
+    required super.tickSound,
+  });
 
-class AppearenceModel extends Appearence{
-  AppearenceModel({required super.themeMode, required super.primaryColorMode, required super.assetBackgroundImagePath});
-
-  factory AppearenceModel.fromMap(Map<String, dynamic> map) {
-    return AppearenceModel(
+  factory SettingModel.fromMap(Map<String, dynamic> map) {
+    return SettingModel(
       themeMode: (map['themeMode'] as String).toThemeMode(),
-      primaryColorMode: PrimaryColorMode.fromName(map['primaryColorMode'] as String),
+      primaryColorMode: PrimaryColorMode.fromName(
+        map['primaryColorMode'] as String,
+      ),
       assetBackgroundImagePath: map['assetBackgroundImagePath'],
+      hapticImpact: map['hapticImpact'] == null ? false : map['hapticImpact'] as bool,
+      tickSound: map['tickSound'] == null ? false : map['tickSound'] as bool,
     );
   }
 
-  factory AppearenceModel.fromEntity(Appearence entity) {
-    return AppearenceModel(
+  factory SettingModel.fromEntity(Setting entity) {
+    return SettingModel(
       themeMode: entity.themeMode,
       primaryColorMode: entity.primaryColorMode,
       assetBackgroundImagePath: entity.assetBackgroundImagePath,
+      hapticImpact: entity.hapticImpact,
+      tickSound: entity.tickSound,
     );
   }
 
@@ -45,6 +52,8 @@ class AppearenceModel extends Appearence{
       'themeMode': themeMode.name,
       'primaryColorMode': primaryColorMode.name,
       'assetBackgroundImagePath': assetBackgroundImagePath,
+      'hapticImpact': hapticImpact,
+      'tickSound': tickSound,
     };
   }
 }

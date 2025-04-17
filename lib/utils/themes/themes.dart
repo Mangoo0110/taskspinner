@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:taskspinner/core/helpers/dekhao.dart';
+import 'package:taskspinner/utils/themes/switch_theme.dart';
 import '../constants/app_colors.dart';
 import 'appbar_theme.dart';
 import 'bottom_appbar_theme.dart';
@@ -29,6 +30,7 @@ class AppTheme {
       scaffoldBackgroundColor: AppColors.light().backgroundColor,
       primaryColor: AppColors.light().primaryColor,
       textTheme: DTextTheme.lightTextTheme,
+      switchTheme: SwitchThemes.lightSwitchTheme,
       //appBarTheme: DAppBarTheme.lightAppBarTheme,
       //bottomAppBarTheme: DBottomAppBarTheme.lightBottomAppBarTheme,
       //inputDecorationTheme: DInputDecorationTheme.lightTheme,
@@ -64,6 +66,7 @@ class AppTheme {
       scaffoldBackgroundColor: AppColors.dark().backgroundColor,
       primaryColor: AppColors.dark().primaryColor,
       textTheme: DTextTheme.darkTextTheme,
+      switchTheme: SwitchThemes.darkSwitchTheme,
       //appBarTheme: DAppBarTheme.darkAppBarTheme,
       //bottomAppBarTheme: DBottomAppBarTheme.darkBottomAppBarTheme,
       // inputDecorationTheme: DInputDecorationTheme.darkTheme,

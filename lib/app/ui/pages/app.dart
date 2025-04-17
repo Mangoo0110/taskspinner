@@ -84,6 +84,7 @@ class _SpinnerTaskAppState extends State<SpinnerTaskApp> {
                     //color: Colors.white,
                     child: Center(
                       child: Wheel(
+                        settingsDataProvider: AppServices.settingsDataProvider,
                         taskWheelUINotifier: taskWheelUINotifier,
                         tasksDataProvider: AppServices.tasksProvider,
                       )),
@@ -227,8 +228,8 @@ class _AssetBackGroundImageState extends State<AssetBackGroundImage> {
     // TODO: implement didChangeDependencies
     AppServices.settingsDataProvider.addListener(
       () {
-        if (mounted && context.mounted && assetBackgroundImagePath != AppServices.settingsDataProvider.currentAppearence.assetBackgroundImagePath) {
-          assetBackgroundImagePath = AppServices.settingsDataProvider.currentAppearence.assetBackgroundImagePath;
+        if (mounted && context.mounted && assetBackgroundImagePath != AppServices.settingsDataProvider.currentSetting.assetBackgroundImagePath) {
+          assetBackgroundImagePath = AppServices.settingsDataProvider.currentSetting.assetBackgroundImagePath;
           setState(() {});
         }
       },
@@ -239,7 +240,7 @@ class _AssetBackGroundImageState extends State<AssetBackGroundImage> {
   @override
   void initState() {
     // TODO: implement initState
-    assetBackgroundImagePath = AppServices.settingsDataProvider.currentAppearence.assetBackgroundImagePath;
+    assetBackgroundImagePath = AppServices.settingsDataProvider.currentSetting.assetBackgroundImagePath;
     super.initState();
   }
 

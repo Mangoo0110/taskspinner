@@ -22,7 +22,7 @@ class AppColors {
   final Color contentBoxGreyColor;
   final Color iconColor; 
   // final Color primaryColor;
-  static Color _primaryColor = AppServices.settingsDataProvider.currentAppearence.primaryColorMode.color;
+  static Color _primaryColor = AppServices.settingsDataProvider.currentSetting.primaryColorMode.color;
   Color get primaryColor => _primaryColor;
   final Color secondaryAccentColor;
   final Color buttonContentColor;
@@ -102,17 +102,17 @@ class AppColors {
       tabBarColor = Colors.black;
 
   factory AppColors.light() {
-    _primaryColor = AppServices.settingsDataProvider.currentAppearence.primaryColorMode.color;
+    _primaryColor = AppServices.settingsDataProvider.currentSetting.primaryColorMode.color;
     return _lightInstance;
   }
 
   factory AppColors.dark() {
-    _primaryColor = AppServices.settingsDataProvider.currentAppearence.primaryColorMode.color;
+    _primaryColor = AppServices.settingsDataProvider.currentSetting.primaryColorMode.color;
     return _darkInstance;
   }
 
   factory AppColors.context(BuildContext context) {
-    _primaryColor = AppServices.settingsDataProvider.currentAppearence.primaryColorMode.color;
+    _primaryColor = AppServices.settingsDataProvider.currentSetting.primaryColorMode.color;
     return Theme.of(context).brightness == Brightness.dark
         ? _darkInstance
         : _lightInstance;

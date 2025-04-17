@@ -34,7 +34,7 @@ base class UpToDateCurrentTasks {
 class TaskWheelUINotifier extends ChangeNotifier {
 
   TaskWheelUINotifier({required this.controller, required this.tasksDataProvider}){
-    _upToDateCurrentTasks = UpToDateCurrentTasks(tasksDataProvider.easyTasks);
+    _upToDateCurrentTasks = UpToDateCurrentTasks(tasksDataProvider.easyTasks.length > 1 ? tasksDataProvider.easyTasks : WheelTask.dummies);
     tasksDataProvider.addListener(() {
       _setUpToDateCurrentTasks();
     });
