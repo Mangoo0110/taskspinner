@@ -33,14 +33,14 @@ base class UpToDateCurrentTasks {
 
 class TaskWheelUINotifier extends ChangeNotifier {
 
-  TaskWheelUINotifier({required this.controller, required this.tasksDataProvider}){
+  TaskWheelUINotifier({required this.wheelStreamcontroller, required this.tasksDataProvider}){
     _upToDateCurrentTasks = UpToDateCurrentTasks(tasksDataProvider.easyTasks.length > 1 ? tasksDataProvider.easyTasks : WheelTask.dummies);
     tasksDataProvider.addListener(() {
       _setUpToDateCurrentTasks();
     });
   }
 
-  final StreamController<int> controller;
+  final StreamController<int> wheelStreamcontroller;
   final TasksDataProvider tasksDataProvider;
   bool _isSpinning = false;
   bool get isSpinning => _isSpinning;
@@ -49,7 +49,6 @@ class TaskWheelUINotifier extends ChangeNotifier {
   TaskType get currentTaskType => _currentTaskType;
   set currentTaskType(TaskType type) {
     if(_currentTaskType == type) return;
-
     _currentTaskType = type;
     _setUpToDateCurrentTasks();
     _selectedIndex = 0;
@@ -62,7 +61,6 @@ class TaskWheelUINotifier extends ChangeNotifier {
   set selectedIndex(int? index) {
     dekhao("selectedIndex: $index");
     index = (index ?? 0) % upToDateCurrentTasks.tasks.length;
-
     // Handle out of index error.
     if(index >= upToDateCurrentTasks.tasks.length && index < 0) return;
     _selectedIndex = (index);
@@ -71,7 +69,6 @@ class TaskWheelUINotifier extends ChangeNotifier {
 
   static final List<WheelTask> _dummyTasks = WheelTask.dummies;
   
-
   UpToDateCurrentTasks _upToDateCurrentTasks = UpToDateCurrentTasks(_dummyTasks);
   UpToDateCurrentTasks get upToDateCurrentTasks => _upToDateCurrentTasks;
 
@@ -79,13 +76,17 @@ class TaskWheelUINotifier extends ChangeNotifier {
     
     List<WheelTask> tasks = [];
     if (_currentTaskType == TaskType.easy) {
-      tasks = tasksDataProvider.easyTasks.isEmpty || tasksDataProvider.easyTasks.length < 2 ? _dummyTasks : tasksDataProvider.easyTasks;
+      tasks = tasksDataProvider.easyTasks;
     } else if (_currentTaskType == TaskType.medium) {
-      tasks = tasksDataProvider.mediumTasks.isEmpty || tasksDataProvider.mediumTasks.length < 2 ? _dummyTasks : tasksDataProvider.mediumTasks;
+      tasks = tasksDataProvider.mediumTasks;
     } else if (_currentTaskType == TaskType.hard) {
-      tasks = tasksDataProvider.hardTasks.isEmpty || tasksDataProvider.hardTasks.length < 2 ? _dummyTasks : tasksDataProvider.hardTasks;
-    } else {
-      tasks = _dummyTasks;
+      tasks = tasksDataProvider.hardTasks;
+    } 
+    // Add dummies until task length is greater than equal 2.
+    int dumIndex = 0;
+    while(tasks.length < 2 && (dumIndex < _dummyTasks.length)) {
+      tasks.add(_dummyTasks[dumIndex]);
+      dumIndex++;
     }
     _upToDateCurrentTasks = UpToDateCurrentTasks(tasks);
     notifyListeners();
@@ -103,7 +104,6 @@ class TaskWheelUINotifier extends ChangeNotifier {
   void spin() {
     _selectedIndex = Random().nextInt(upToDateCurrentTasks.tasks.length) % upToDateCurrentTasks.tasks.length;
     _isSpinning = true; notifyListeners();
-    controller.add(_selectedIndex);
-    
+    wheelStreamcontroller.add(_selectedIndex);
   }
 }

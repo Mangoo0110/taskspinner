@@ -12,7 +12,8 @@ import '../../../init_dependencies.dart';
 import '../../domain/entities/wheel_task.dart';
 import '../../domain/usecases/delete_tasks.dart';
 import '../../domain/usecases/stream_wheel_tasks.dart';
-import '../../domain/usecases/write_task.dart';
+import '../../domain/usecases/create_task.dart';
+import '../../domain/usecases/update_task.dart';
 
 mixin class TasksDBActions {
   Future<void> openDb({
@@ -27,7 +28,7 @@ mixin class TasksDBActions {
   Future<void> addTask({
     required String title, 
     required String details, 
-    required TaskType currentTaskType,
+    required int minuteDuration,
     required ButtonStatusNotifier buttonStatusNotifier,
   }) async { 
     
@@ -41,16 +42,16 @@ mixin class TasksDBActions {
 
     WheelTask task = WheelTask(
       id: Uuid().v1(),
-      type: currentTaskType,
       title: title,
       details: details,
+      minuteDuration: minuteDuration,
       createdAt: DateTime.now(),
     );
     // Set the button status to loading
     buttonStatusNotifier.setStatus(LoadingStatus(message: "Adding task..."));
     // Simulate a delay for the loading status
     return Future.delayed(const Duration(milliseconds: 1000), () {}).then((_) async{
-        return await serviceLocator<WriteTask>().call(task).then((rl) {
+        return await serviceLocator<CreateTask>().call(task).then((rl) {
           return rl.fold((l) {
             buttonStatusNotifier.setStatus(ErrorStatus(message: l.message));
           }, (r) {
@@ -63,32 +64,23 @@ mixin class TasksDBActions {
 
   Future<void> updateTask({
     required String id,
-    required String title, 
-    required String details, 
-    required TaskType currentTaskType,
+    required String? title, 
+    required String? details, 
+    required int? minuteDuration,
     required ButtonStatusNotifier buttonStatusNotifier,
-  }) async { 
+  }) async {
     
-    title = title.trim();
-    details = details.trim();
-
-    if (title.isEmpty) {
-      dekhao("Error: Title is empty!");
-      return;
+    if (title?.isEmpty ?? false) {
+      title = null;
     }
 
-    WheelTask task = WheelTask(
-      id: id,
-      type: currentTaskType,
-      title: title,
-      details: details,
-      createdAt: DateTime.now(),
-    );
     // Set the button status to loading
     buttonStatusNotifier.setStatus(LoadingStatus(message: "Updating task..."));
     // Simulate a delay for the loading status
     return Future.delayed(const Duration(milliseconds: 1000), () {}).then((_) async{
-      return await serviceLocator<WriteTask>().call(task).then((rl) {
+      return await serviceLocator<UpdateTask>().call(
+        UpdateTaskParams(id: id, title: title, details: details, minuteDuration: minuteDuration)
+      ).then((rl) {
           return rl.fold((l) {
             buttonStatusNotifier.setStatus(ErrorStatus(message: l.message));
           }, (r) {

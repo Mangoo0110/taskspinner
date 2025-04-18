@@ -9,7 +9,14 @@ abstract interface class TaskRepo {
   Future<Either<DataCRUDFailure, bool>> openDb();
   
   /// Writes a task to the database and returns a [Success] if the operation was successful.
-  Future<Either<DataCRUDFailure, Success>> writeTask({required WheelTask task});
+  Future<Either<DataCRUDFailure, Success>> createTask({required WheelTask task});
+
+  Future<Either<DataCRUDFailure, Success>> updateTask({
+    required String id,
+    required String? title,
+    required String? details,
+    required int? minuteDuration,
+  });
 
   /// Deletes a task from the database and returns a [Success] if the operation was successful.
   Future<Either<DataCRUDFailure, Success>> deleteTask({required String taskId});

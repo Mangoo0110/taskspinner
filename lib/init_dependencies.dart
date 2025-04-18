@@ -13,20 +13,15 @@ import 'package:taskspinner/core/services/app_services.dart';
 import 'app/data/repo/task_repo_impl.dart';
 import 'app/domain/repo/task_repo.dart';
 import 'app/domain/usecases/delete_tasks.dart';
-import 'app/domain/usecases/write_task.dart';
+import 'app/domain/usecases/create_task.dart';
+import 'app/domain/usecases/update_task.dart';
 
 final serviceLocator = GetIt.instance;
-
-//::: Datasources [register singletone]
-
-//::: Repo [register factory]
-
-//::: Usecases
 
 Future<void> initDependencies() async {
   // Dependencies
   _settingsServiceDI();
-  _taskServicesDI();
+  _taskServiceDI();
 
   // Call essential service initialization
   await AppServices.init();
@@ -35,7 +30,7 @@ Future<void> initDependencies() async {
 
 
 
-void _taskServicesDI() {
+void _taskServiceDI() {
   //::: Remote Datasource [register singletone]
   // -----none-----
 
@@ -54,7 +49,10 @@ void _taskServicesDI() {
     () => DeleteTask(serviceLocator<TaskRepo>()),
   );
   serviceLocator.registerLazySingleton(
-    () => WriteTask(serviceLocator<TaskRepo>()),
+    () => CreateTask(serviceLocator<TaskRepo>()),
+  );
+  serviceLocator.registerLazySingleton(
+    () => UpdateTask(serviceLocator<TaskRepo>()),
   );
   serviceLocator.registerLazySingleton(
     () => StreamWheelTasks(serviceLocator<TaskRepo>()),

@@ -40,6 +40,7 @@ class AppColors {
   final Color enabledBorderColor;
   final Color borderColor;
   final Color popupBackgroundColor;
+  final Color popupContentColor;
   final Color dividerColor;
   final Color tabBarColor;
   final Color shadowColor;
@@ -52,15 +53,12 @@ class AppColors {
       contentBoxGreyColor = Colors.grey.shade200,
       backgroundColor = Colors.white,
       iconColor = Colors.black,
-      //primaryColor = _actionColor,
       secondaryAccentColor = _secondaryActionColor,
       buttonColor = Colors.black,
       buttonContentColor = Colors.white,
       activeButtonContentColor = Colors.white,
       inActiveButtonContentColor = Colors.grey.shade200,
       inActiveButtonColor = Colors.grey.shade700,
-      
-      
       drawerColor = Colors.white,
       fillColor = Colors.transparent,
       hintColor = Colors.grey.shade700,
@@ -70,6 +68,7 @@ class AppColors {
       borderColor = Colors.grey.shade700,
       dividerColor = Colors.grey.shade200,
       popupBackgroundColor = Colors.grey.shade200,
+      popupContentColor = Colors.black,
       shadowColor = const Color(0x1F000000),
       errorColor = Colors.red,
       tabBarColor = Colors.white;
@@ -81,7 +80,6 @@ class AppColors {
       contentBoxColor = Colors.grey.shade900,
       contentBoxGreyColor = Colors.grey.shade700,
       iconColor = Colors.white,
-      //primaryColor = _actionColor,
       secondaryAccentColor = _secondaryActionColor,
       buttonColor = Colors.white,
       buttonContentColor = Colors.black,
@@ -98,7 +96,8 @@ class AppColors {
       dividerColor = Colors.grey.shade900,
       errorColor = Colors.red,
       popupBackgroundColor = Colors.black,
-      shadowColor = const Color.fromARGB(255, 18, 18, 18),
+      popupContentColor = Colors.white,
+      shadowColor = const Color.fromARGB(146, 124, 123, 123),
       tabBarColor = Colors.black;
 
   factory AppColors.light() {

@@ -37,7 +37,7 @@ void main() async{
         test('Setting data provider presence', () {
           dekhao(WheelTask.dummies.length);
           //dekhao(TaskWheelUINotifier(controller: StreamController(), tasksDataProvider: AppServices.tasksProvider).upToDateCurrentTasks.tasks.length);
-          expect(TaskWheelUINotifier(controller: StreamController(), tasksDataProvider: AppServices.tasksProvider).upToDateCurrentTasks.tasks.length >= 2, true);
+          expect(TaskWheelUINotifier(wheelStreamcontroller: StreamController(), tasksDataProvider: AppServices.tasksProvider).upToDateCurrentTasks.tasks.length >= 2, true);
           expect(WheelTask.dummies.length == 2, true);
           //expect(setting.currentSetting == Setting.defaultSetting(), false);
           //expect(serviceLocator.hasScope("SettingsLocalDatasource"), true);

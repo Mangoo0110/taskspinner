@@ -1,11 +1,8 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:taskspinner/core/features/settings/domain/entity/setting.dart';
-
-import 'appearence_notifier.dart';
 import '../../../../helpers/dekhao.dart';
-import 'settings_db_actions.dart';
+import 'setting_db_actions.dart';
 
 
 extension AppThemeModeExtension on ThemeMode {

@@ -46,7 +46,8 @@ class SettingsPopup extends StatelessWidget {
                       onTap: () {
                         
                       },
-                      child: Container(
+                      child: AnimatedContainer(
+                        duration: Duration(milliseconds: 350),
                         padding: const EdgeInsets.all(20),
                         decoration: BoxDecoration(
                           color: AppColors.context(context).popupBackgroundColor,

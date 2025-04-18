@@ -15,16 +15,16 @@ class TaskRepoImpl implements TaskRepo {
   TaskRepoImpl(this._localDatasource);
 
   @override
-  Future<Either<DataCRUDFailure, Success>> writeTask({
+  Future<Either<DataCRUDFailure, Success>> createTask({
     required WheelTask task,
   }) async {
     return asyncTryCatch<Success>(
-      tryFunc: () async{
-        return await _localDatasource.writeTask(WheelTaskModel.fromEntity(task)).then(
-          (value) {
-            return Success(message: "Task added successfully");
-          },
-        );
+      tryFunc: () async {
+        return await _localDatasource
+            .createTask(WheelTaskModel.fromEntity(task))
+            .then((value) {
+              return Success(message: "Task added successfully");
+            });
       },
     );
   }
@@ -34,7 +34,7 @@ class TaskRepoImpl implements TaskRepo {
     required String taskId,
   }) async {
     return await asyncTryCatch<Success>(
-      tryFunc: () async{
+      tryFunc: () async {
         return await _localDatasource.deleteTask(taskId).then((value) {
           return Success(message: "Task is deleted successfully.");
         });
@@ -50,13 +50,31 @@ class TaskRepoImpl implements TaskRepo {
       },
     );
   }
-  
+
   @override
-  Future<Either<DataCRUDFailure, bool>> openDb() async{
+  Future<Either<DataCRUDFailure, bool>> openDb() async {
     return await asyncTryCatch<bool>(
-      tryFunc: () async{
+      tryFunc: () async {
         dekhao("calling local db to open.");
         return await _localDatasource.openDb();
+      },
+    );
+  }
+
+  @override
+  Future<Either<DataCRUDFailure, Success>> updateTask({
+    required String id,
+    required String? title,
+    required String? details,
+    required int? minuteDuration,
+  }) async{
+    return asyncTryCatch<Success>(
+      tryFunc: () async {
+        return await _localDatasource
+            .updateTask(id: id, title: title, details: details, minuteDuration: minuteDuration)
+            .then((value) {
+              return Success(message: "Task updated successfully");
+            });
       },
     );
   }

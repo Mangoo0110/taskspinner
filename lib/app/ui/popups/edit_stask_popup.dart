@@ -3,12 +3,14 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:taskspinner/app/domain/entities/wheel_task.dart';
 import 'package:taskspinner/app/ui/controllers/task_wheel_ui_notifier.dart';
+import 'package:taskspinner/app/ui/widgets/task_type_and_duration.dart';
 import 'package:taskspinner/core/commons/widgets/description_textfield.dart';
 import 'package:taskspinner/core/commons/widgets/save_button.dart';
 import 'package:taskspinner/core/notifiers/button_status_notifier.dart';
 
 import '../../../core/commons/widgets/custom_textfield.dart';
 import '../../../core/helpers/dekhao.dart';
+import '../../../core/services/app_services.dart';
 import '../../../utils/constants/app_colors.dart' show AppColors;
 import '../../../utils/constants/app_sizes.dart';
 import '../controllers/tasks_data_provider.dart';
@@ -25,6 +27,7 @@ class EditTaskPopup extends StatefulWidget {
 }
 
 class _EditTaskPopupState extends State<EditTaskPopup> {
+  late int minuteDuration;
   final TextEditingController _taskNameController = TextEditingController();
   final TextEditingController _taskDetailsController = TextEditingController();
 
@@ -35,7 +38,7 @@ class _EditTaskPopupState extends State<EditTaskPopup> {
     if (_taskNameController.text.isNotEmpty) {
       if(widget.editingTask == null) {
           await widget.tasksDataProvider.addTask(
-            currentTaskType: widget.taskWheelUINotifier.currentTaskType,
+            minuteDuration: minuteDuration,
             title: _taskNameController.text,
             details: _taskDetailsController.text,
             buttonStatusNotifier: saveStatusNotifier,
@@ -49,7 +52,7 @@ class _EditTaskPopupState extends State<EditTaskPopup> {
           id: widget.editingTask!.id,
           title: _taskNameController.text,
           details: _taskDetailsController.text,
-          currentTaskType: widget.taskWheelUINotifier.currentTaskType,
+          minuteDuration: minuteDuration,
         );
       }
     }
@@ -70,6 +73,7 @@ class _EditTaskPopupState extends State<EditTaskPopup> {
     // TODO: implement initState
     _taskNameController.text = widget.editingTask?.title ?? "";
     _taskDetailsController.text = widget.editingTask?.details ?? "";
+    minuteDuration = widget.editingTask?.minuteDuration ?? 1;
     super.initState();
   }
 
@@ -122,41 +126,49 @@ class _EditTaskPopupState extends State<EditTaskPopup> {
                                 ),
                                 child: SingleChildScrollView(
                                   child: Column(
+                                    mainAxisSize: MainAxisSize.min,
                                     mainAxisAlignment: MainAxisAlignment.end,
                                     children: [
                                       
+                                      TaskTypeAndDuration(
+                                        initialDuration: minuteDuration,
+                                        onChanged: (value) {
+                                          minuteDuration = value;
+                                        },
+                                      ),
+                                                                      
+                                      SizedBox(height: 20,),
                                       // task input
                                       _taskTitleInput(),
-                              
+                                                              
                                       SizedBox(height: 10),
-                              
+                                                              
                                       // task details input
                                       _detailsInput(constraints: constraints),
-                                      
-                                      SizedBox(height: 10),
-                              
+                                                                      
+                                      SizedBox(height: 30),
+                                                              
                                       (widget.editingTask?.isDummy ?? false) 
-                                      ? Container(
-                                          height: 50,
-                                          width: constraints.maxWidth,
-                                          decoration: BoxDecoration(
-                                            color: AppColors.context(context).inActiveButtonColor,
-                                            borderRadius: AppSizes.maxCircularRadius,
-                                          ),
-                                          child: Center(
-                                            child: Text(
-                                              "Dummy Task!",
-                                              style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                                                color: AppColors.context(context).inActiveButtonContentColor,
-                                              ),
+                                        ? Container(
+                                            height: 50,
+                                            width: constraints.maxWidth,
+                                            decoration: BoxDecoration(
+                                              color: AppColors.context(context).inActiveButtonColor,
+                                              borderRadius: AppSizes.maxCircularRadius,
                                             ),
-                                          )
-                                      ) 
-                                      : _saveDeleteButtons(),
+                                            child: Center(
+                                              child: Text(
+                                                "Dummy Task!",
+                                                style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                                                  color: AppColors.context(context).inActiveButtonContentColor,
+                                                ),
+                                              ),
+                                            )
+                                        ) 
+                                        : _saveDeleteButtons(),
                                       
                                     ],
                                   ),
-                                          
                                 ),
                               ),
                             ),
@@ -189,33 +201,40 @@ class _EditTaskPopupState extends State<EditTaskPopup> {
                 borderRadius: AppSizes.smallBorderRadius,
               ),
               child: SaveButton(
+                saveText: widget.editingTask == null ? "Create" : "Update",
                 key: UniqueKey(),
                 buttonStatusNotifier: saveStatusNotifier,
-                onDone: () {
-                  Navigator.pop(context);
+                onDone: () async{
+                  await AppServices.physicalFeedback.tick();
+                  if(mounted && context.mounted) Navigator.pop(context);
                 },
                 onSave: () async{
                   _saveTask();
                 },
               ),
             ),
-
-            SizedBox(height: 10,),
-
+        
+            
+        
             // task delete button
-            if(widget.editingTask != null) Align(
-              alignment: Alignment.centerRight, 
-              child: DeleteButton(
-                key: UniqueKey(),
-                buttonStatusNotifier: deleteStatusNotifier,
-                onDelete: () {
-                  /// TODO: implement delete task functionality
-                  _deleteTask();
-                },
-                onDone: () async{
-                  Navigator.pop(context);
-                },
-              )
+            if(widget.editingTask != null) Column(
+              children: [
+                SizedBox(height: 10,),
+                Align(
+                  alignment: Alignment.centerRight, 
+                  child: DeleteButton(
+                    key: UniqueKey(),
+                    buttonStatusNotifier: deleteStatusNotifier,
+                    onDelete: () {
+                      /// TODO: implement delete task functionality
+                      _deleteTask();
+                    },
+                    onDone: () async{
+                      Navigator.pop(context);
+                    },
+                  )
+                ),
+              ],
             ),
           ],
         );
@@ -232,7 +251,7 @@ class _EditTaskPopupState extends State<EditTaskPopup> {
           child: CustomTextfield(
             maxLines: 2,
             hintText: "Task title",
-            labelText: "",
+            labelText: "Title",
             onSubmit: () {
             },
             onChanged: (text) {
@@ -256,9 +275,9 @@ class _EditTaskPopupState extends State<EditTaskPopup> {
             borderRadius: AppSizes.smallBorderRadius,
           ),
           child: DescriptionTextfield(
-            maxLines: 4,
-            hintText: "Task Details",
-            labelText: "",
+            maxLines: 10,
+            hintText: "Task details",
+            labelText: "Details",
             //onSubmit: () {},
             onChanged: (text) {},
             //validationCheck: (text) {},

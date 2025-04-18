@@ -1,3 +1,3 @@
 void dekhao(dynamic data) {
-  print(data.toString());
+  //print(data.toString());
 }

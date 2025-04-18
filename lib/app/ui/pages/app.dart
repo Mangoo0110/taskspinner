@@ -3,16 +3,15 @@ import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:taskspinner/app/ui/controllers/task_wheel_ui_notifier.dart';
-import 'package:taskspinner/app/ui/widgets/edit_stask_popup.dart';
+import 'package:taskspinner/app/ui/popups/edit_stask_popup.dart';
 import 'package:taskspinner/app/ui/widgets/bottom_middle_button.dart';
 import 'package:taskspinner/core/features/settings/presentation/pages/settings_popup.dart';
-import 'package:taskspinner/app/ui/widgets/task_list_popup.dart';
-import 'package:taskspinner/core/commons/enums/tasktype.dart';
+import 'package:taskspinner/core/helpers/dekhao.dart';
 import 'package:taskspinner/core/services/app_services.dart';
 import '../../../core/commons/widgets/custom_button.dart';
 import '../../../utils/constants/app_colors.dart';
 import '../../../utils/constants/app_names.dart';
-import '../../../utils/constants/app_sizes.dart';
+import '../widgets/select_task_and_show_button.dart';
 import '../widgets/wheel.dart';
 
 
@@ -30,7 +29,7 @@ class _SpinnerTaskAppState extends State<SpinnerTaskApp> {
   static StreamController<int> controller = StreamController<int>();
 
   static TaskWheelUINotifier taskWheelUINotifier = TaskWheelUINotifier(
-    controller: controller,
+    wheelStreamcontroller: controller,
     tasksDataProvider: AppServices.tasksProvider
   );
 
@@ -67,10 +66,29 @@ class _SpinnerTaskAppState extends State<SpinnerTaskApp> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Text(AppNames.appName, style: Theme.of(context).textTheme.titleLarge,),
+                      Stack(
+                        children: [
+                          // Border text
+                          Text(
+                            AppNames.appName,
+                            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                              foreground: Paint()
+                                ..style = PaintingStyle.stroke
+                                ..strokeWidth = 1.5
+                                ..color = AppColors.context(context).primaryColor,
+                            ),
+                          ),
+                          // Fill text
+                          Text(
+                            AppNames.appName,
+                            style: Theme.of(context).textTheme.titleLarge,
+                          ),
+                        ],
+                      ),
+                      //Text(AppNames.appName, style: Theme.of(context).textTheme.titleLarge,),
                       const SizedBox(height: 10,),
                       Center(
-                        child: TaskListShowButton(taskWheelUINotifier: taskWheelUINotifier,),
+                        child: SelectTaskAndShowButton(taskWheelUINotifier: taskWheelUINotifier,),
                       ),
                     ],
                   ),
@@ -84,6 +102,7 @@ class _SpinnerTaskAppState extends State<SpinnerTaskApp> {
                     //color: Colors.white,
                     child: Center(
                       child: Wheel(
+                        physicalFeedback: AppServices.physicalFeedback,
                         settingsDataProvider: AppServices.settingsDataProvider,
                         taskWheelUINotifier: taskWheelUINotifier,
                         tasksDataProvider: AppServices.tasksProvider,
@@ -125,7 +144,7 @@ class _SpinnerTaskAppState extends State<SpinnerTaskApp> {
                     child: _bottomSideButton(
                       icon: Icons.create,
                       onTap: () {
-                        print("Create tapped");
+                        dekhao("Create tapped");
                         _showAddTaskDialog(context);
                       },
                     ),
@@ -146,7 +165,7 @@ class _SpinnerTaskAppState extends State<SpinnerTaskApp> {
                     child: _bottomSideButton(
                       icon: Icons.settings,
                       onTap: () {
-                        print("Filter Task");
+                        dekhao("Filter Task");
                         _showSettingsDialog(context);
                       },
                     ),
@@ -163,18 +182,18 @@ class _SpinnerTaskAppState extends State<SpinnerTaskApp> {
   Widget _bottomSideButton({required IconData icon, required VoidCallback onTap}) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        double _bottomSideButtonRadius = min(70, constraints.maxWidth - 16)/2 ;
+        double bottomSideButtonRadius = min(70, constraints.maxWidth - 16)/2 ;
         return CircleAvatar(
           backgroundColor: AppColors.context(context).contentBoxColor,
-          radius: _bottomSideButtonRadius,
+          radius: bottomSideButtonRadius,
           child: CustomButton(
             borderRadius: BorderRadius.circular(80000000),
             onTap: () {
               onTap();
             },
             child: SizedBox(
-              height: _bottomSideButtonRadius * 2,
-              width: _bottomSideButtonRadius * 2,
+              height: bottomSideButtonRadius * 2,
+              width: bottomSideButtonRadius * 2,
               child: Icon(icon, color: AppColors.context(context).textColor.withAlpha(200))),
           ),
         );
@@ -225,7 +244,6 @@ class _AssetBackGroundImageState extends State<AssetBackGroundImage> {
 
   @override
   void didChangeDependencies() {
-    // TODO: implement didChangeDependencies
     AppServices.settingsDataProvider.addListener(
       () {
         if (mounted && context.mounted && assetBackgroundImagePath != AppServices.settingsDataProvider.currentSetting.assetBackgroundImagePath) {
@@ -239,7 +257,6 @@ class _AssetBackGroundImageState extends State<AssetBackGroundImage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     assetBackgroundImagePath = AppServices.settingsDataProvider.currentSetting.assetBackgroundImagePath;
     super.initState();
   }
@@ -262,100 +279,6 @@ class _AssetBackGroundImageState extends State<AssetBackGroundImage> {
         );
       },
     );
-  }
-}
-
-
-class TaskListShowButton extends StatefulWidget {
-  final TaskWheelUINotifier taskWheelUINotifier;
-  const TaskListShowButton({super.key, required this.taskWheelUINotifier});
-  @override
-  State<TaskListShowButton> createState() => _TaskListShowButtonState();
-}
-
-class _TaskListShowButtonState extends State<TaskListShowButton> {
-  late TaskType currentTaskType;
-
-  @override
-  void didChangeDependencies() {
-    // TODO: implement didChangeDependencies
-    widget.taskWheelUINotifier.addListener(() {
-      if (mounted && context.mounted && currentTaskType != widget.taskWheelUINotifier.currentTaskType) {
-        currentTaskType = widget.taskWheelUINotifier.currentTaskType;
-        setState(() {});
-      }
-    });
-    super.didChangeDependencies();
-  }
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    currentTaskType = widget.taskWheelUINotifier.currentTaskType;
-    super.initState();
-  }
-  @override
-  Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        return CustomButton(
-          borderRadius: AppSizes.maxCircularRadius,
-          onTap: () {
-            _showAllTaskDialog(context);
-          },
-          child: Hero(
-            tag: "TaskListPopup",
-            // flightShuttleBuilder: (flightContext, animation, direction, fromContext, toContext) {
-            //   return FadeTransition(
-            //     opacity: animation,
-            //     child: toContext.widget,
-            //   );
-            // },
-            child: AnimatedContainer(
-              duration: Duration(milliseconds: 500),
-              decoration: BoxDecoration(
-                color: AppColors.context(context).popupBackgroundColor,
-                borderRadius: AppSizes.maxCircularRadius,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withAlpha(2),
-                    spreadRadius: 3,
-                    blurRadius: 7,
-                  ),
-                ],
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 26.0, vertical: 10),
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(Icons.filter_alt, color: AppColors.context(context).textColor,),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 4.0),
-                        child: Text(currentTaskType.name, style: Theme.of(context).textTheme.titleMedium,),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  void _showAllTaskDialog(BuildContext context) {
-    Navigator.of(context).push(
-      PageRouteBuilder(
-        opaque: false,
-        barrierDismissible: true,
-        pageBuilder: (_, __, ___) {
-          return TaskListPopup(taskWheelUINotifier: widget.taskWheelUINotifier,);
-      },
-    ));
   }
 }
 

@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:taskspinner/core/helpers/dekhao.dart';
+import 'package:taskspinner/core/services/app_services.dart';
 
 import 'custom_button.dart';
 import '../../notifiers/button_status_notifier.dart';
@@ -44,7 +45,8 @@ class _SaveButtonState extends State<SaveButton> {
 
       if (buttonStatusNotifier.status is SuccessStatus) {
           dekhao("Successful save");
-          Future.delayed(const Duration(milliseconds: 1000)).then((_) {
+          Future.delayed(const Duration(milliseconds: 1000)).then((_) async{
+            await AppServices.physicalFeedback.availableFeedbacks();
             if(context.mounted && mounted) {
               widget.onDone();
             }
@@ -78,7 +80,7 @@ class _SaveButtonState extends State<SaveButton> {
           ),
           child: CustomButton(
             borderRadius: AppSizes.smallBorderRadius,
-            onTap: () {
+            onTap: () async{
               // TODO: Handle delete task action here
               if(buttonStatusNotifier.status is EnabledStatus) {
                 widget.onSave();
@@ -106,7 +108,7 @@ class _SaveButtonState extends State<SaveButton> {
           case const (EnabledStatus):
             return Text(
               widget.saveText,
-              style: Theme.of(context).textTheme.labelLarge?.copyWith(
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
                 color: AppColors.context(context).buttonContentColor,
               ),
             );
@@ -115,7 +117,7 @@ class _SaveButtonState extends State<SaveButton> {
             dekhao("Button is disabled");
             return Text(
               widget.saveText,
-              style: Theme.of(context).textTheme.labelLarge?.copyWith(
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
                 color: AppColors.context(context).inActiveButtonContentColor,
               ),
             );
@@ -127,7 +129,7 @@ class _SaveButtonState extends State<SaveButton> {
                 SizedBox(width: 10),
                 Text(
                   widget.savingText,
-                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     color: AppColors.context(context).buttonContentColor,
                   ),
                 ),
@@ -151,7 +153,7 @@ class _SaveButtonState extends State<SaveButton> {
                 SizedBox(width: 10),
                 Text(
                   widget.errorText,
-                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     color: AppColors.context(context).buttonContentColor,
                   ),
                 ),
@@ -170,7 +172,7 @@ class _SaveButtonState extends State<SaveButton> {
                 SizedBox(width: 10),
                 Text(
                   widget.doneText,
-                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     color: AppColors.context(context).buttonContentColor,
                   ),
                 ),
@@ -180,7 +182,7 @@ class _SaveButtonState extends State<SaveButton> {
             dekhao("Button status not found");
             return Text(
               "Save",
-              style: Theme.of(context).textTheme.labelLarge?.copyWith(
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
                 color: AppColors.context(context).inActiveButtonContentColor,
               ),
             );

@@ -28,7 +28,7 @@ class DescriptionTextfield extends StatelessWidget {
         maxLines: maxLines,
         controller: controller,
         decoration: InputDecoration(
-          floatingLabelBehavior: FloatingLabelBehavior.always,
+          floatingLabelBehavior: FloatingLabelBehavior.auto,
           alignLabelWithHint: false,
           constraints: BoxConstraints(minHeight: constraints.maxHeight),
           hintText: hintText,

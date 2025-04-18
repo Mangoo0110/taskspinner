@@ -26,4 +26,8 @@ enum TaskType {
         throw Exception("Invalid TaskType");
     }
   }
+
+  factory TaskType.typeFromDurationLength(int minutes) {
+    return minutes > 30 ? TaskType.hard : minutes > 5 ? TaskType.medium : TaskType.easy;
+  }
 }

@@ -1,24 +1,22 @@
 
-
-import '../../../core/commons/enums/tasktype.dart';
 import '../../../core/helpers/formatting.dart';
 import '../../domain/entities/wheel_task.dart';
 
 class WheelTaskModel extends WheelTask {
   WheelTaskModel({
     required super.id,
-    required super.type,
     required super.title,
     required super.details,
+    required super.minuteDuration,
     required super.createdAt,
   });
 
   factory WheelTaskModel.fromMap(Map<String, dynamic> map) {
     return WheelTaskModel(
       id: map['id'] as String,
-      type: TaskType.fromString(map['type'] ?? ""),
       title: map['title'] as String,
       details: map['details'] as String,
+      minuteDuration: map["minuteDuration"] ?? 1,
       createdAt: parseDateTime(map['createdAt'] ?? ""),
     );
   }
@@ -26,7 +24,7 @@ class WheelTaskModel extends WheelTask {
   factory WheelTaskModel.fromEntity(WheelTask entity) {
     return WheelTaskModel(
       id: entity.id,
-      type: entity.type,
+      minuteDuration: entity.minuteDuration,
       title: entity.title,
       details: entity.details,
       createdAt: entity.createdAt,
@@ -36,7 +34,7 @@ class WheelTaskModel extends WheelTask {
   Map<String, dynamic> toMap() {
     return {
       'id': id,
-      'type': type.name,
+      'minuteDuration': minuteDuration,
       'title': title,
       'details': details,
       'createdAt': createdAt.toIso8601String(),

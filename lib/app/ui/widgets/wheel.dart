@@ -1,24 +1,25 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_fortune_wheel/flutter_fortune_wheel.dart';
-import 'package:just_audio/just_audio.dart';
 import 'package:taskspinner/app/ui/controllers/task_wheel_ui_notifier.dart';
 import 'package:taskspinner/app/ui/controllers/tasks_data_provider.dart';
-import 'package:taskspinner/app/ui/widgets/edit_stask_popup.dart';
+import 'package:taskspinner/app/ui/popups/edit_stask_popup.dart';
 import 'package:taskspinner/core/commons/enums/tasktype.dart';
 import 'package:taskspinner/core/features/settings/domain/entity/setting.dart';
 import '../../../core/features/settings/presentation/notifiers/settings_data_provider.dart';
 import 'package:taskspinner/core/helpers/dekhao.dart';
 import 'package:taskspinner/utils/constants/app_colors.dart';
 
+import '../../../core/helpers/physical_feedback.dart';
+
 
 class Wheel extends StatefulWidget {
+  final PhysicalFeedback physicalFeedback;
   final TasksDataProvider tasksDataProvider;
   final SettingsDataProvider settingsDataProvider;
   final TaskWheelUINotifier taskWheelUINotifier;
-  const Wheel({super.key, required this.taskWheelUINotifier, required this.tasksDataProvider, required this.settingsDataProvider});
+  const Wheel({super.key, required this.taskWheelUINotifier, required this.physicalFeedback, required this.tasksDataProvider, required this.settingsDataProvider});
 
   @override
   State<Wheel> createState() => _WheelState();
@@ -29,13 +30,11 @@ class _WheelState extends State<Wheel> {
 
   late TaskType currentTaskType;
   late UpToDateCurrentTasks upToDateCurrentTasks;
-
   late Setting setting;
 
 
   @override
   void didChangeDependencies() {
-
     widget.taskWheelUINotifier.addListener(() {
       dekhao("data changed in task notifier");
       if (mounted && context.mounted && upToDateCurrentTasks.lastUpdatedAt != widget.taskWheelUINotifier.upToDateCurrentTasks.lastUpdatedAt) {
@@ -46,54 +45,21 @@ class _WheelState extends State<Wheel> {
         });
       }
     });
-
-
-    // Listen to tickSound and haptic impact setting change
-
-    widget.settingsDataProvider.addListener(() {
-      dekhao("data changed in task notifier");
-      setting = widget.settingsDataProvider.currentSetting;
-    });
     super.didChangeDependencies();
   }
 
-  Future<void> giveFeedback() async{
-    try {
-      if(setting.tickSound) {
-        dekhao("ticking..");
-        await _player.seek(Duration.zero); // rewind
-        await _player.play();              // fire-and-forget
-      }
-
-      if(setting.hapticImpact) {
-        HapticFeedback.heavyImpact();
-      }
-    } catch (e) {
-      dekhao("");
-    }
-    
-  }
-
-  late final AudioPlayer _player;
-  int _tickerCount = 0;
-
+  
 
   @override
   void initState() {
     upToDateCurrentTasks =  widget.taskWheelUINotifier.upToDateCurrentTasks;
     currentTaskType = widget.taskWheelUINotifier.currentTaskType;
     setting = widget.settingsDataProvider.currentSetting;
-    
-    _player = AudioPlayer();
-
-    // Preload the tick sound
-    _player.setAsset('assets/sounds/spin_tick.mp3');
     super.initState();
   }
 
   @override
   void dispose() {
-    _player.dispose();
     super.dispose();
   }
 
@@ -104,87 +70,103 @@ class _WheelState extends State<Wheel> {
         return SizedBox(
           height: min(constraints.maxWidth, constraints.maxHeight) ,
           width: min(constraints.maxWidth, constraints.maxHeight) ,
-          child: FortuneWheel(
-            hapticImpact: HapticImpact.heavy,
-            physics: NoPanPhysics(),
-            animateFirst: false,
-            indicators: [
-              FortuneIndicator(
-                alignment: Alignment.topCenter,
-                child: TriangleIndicator(
-                  color: AppColors.context(context).textColor,
-                  elevation: 6,
+          child: //upToDateCurrentTasks.tasks.length < 2 ?
+            // Container(
+            //   decoration: BoxDecoration(
+            //     boxShadow: [
+            //       // BoxShadow(
+            //       //   color: AppColors.context(context).shadowColor,
+            //       //   blurRadius: 10,
+            //       //   spreadRadius: 2,
+            //       //   offset: Offset(0, 4),
+            //       // ),
+            //     ]
+            //   ),
+            //   child: Center(
+            //     child: Text(
+            //       "Task wheel won't show up and rotate if tasks are less than 2 in number. Hurry up, add tasks and rotate to get your lucky tasks, now.", 
+            //       maxLines: 6,
+            //       style: Theme.of(context).textTheme.bodyLarge?.copyWith(),
+            //     ),
+            //   ),
+            // )
+            // : 
+            FortuneWheel(
+              hapticImpact: HapticImpact.heavy,
+              physics: NoPanPhysics(),
+              animateFirst: false,
+              indicators: [
+                FortuneIndicator(
+                  alignment: Alignment.topCenter,
+                  child: TriangleIndicator(
+                    color: AppColors.context(context).textColor,
+                    elevation: 6,
+                  ),
                 ),
-              ),
-            ],
-            onFocusItemChanged: (value) {
-              dekhao("Throw feedback");
-               giveFeedback();
-              // if(_tickerCount % 3 == 0) playTick();
-              // _tickerCount++;
-            },
-            selected: widget.taskWheelUINotifier.controller.stream,
-            onAnimationEnd: () {
-              giveFeedback();
-              widget.taskWheelUINotifier.onAnimationEnd();
-              
-            },
-            
-            items:
-                 widget.taskWheelUINotifier.upToDateCurrentTasks.tasks
-                    .asMap() // Converts the list to a map with the index as the key
-                    .map(
-                      (index, task) => MapEntry(
-                        index,
-                        FortuneItem(
-                          onTap: () {
-                            Navigator.of(context).push(
-                            PageRouteBuilder(
-                              opaque: false,
-                              barrierDismissible: true,
-                              transitionDuration: Duration(milliseconds: 600),
-                              pageBuilder: (_, __, ___) {
-                              return EditTaskPopup(tasksDataProvider: widget.tasksDataProvider, taskWheelUINotifier: widget.taskWheelUINotifier, editingTask: task,);
+              ],
+              onFocusItemChanged: (value) {
+                widget.physicalFeedback.availableFeedbacks();
+                dekhao("Throw feedback");
+              },
+              selected: widget.taskWheelUINotifier.wheelStreamcontroller.stream,
+              onAnimationEnd: () {
+                widget.physicalFeedback.availableFeedbacks();
+                widget.taskWheelUINotifier.onAnimationEnd();
+              },
+              items:
+                  widget.taskWheelUINotifier.upToDateCurrentTasks.tasks
+                      .asMap() // Converts the list to a map with the index as the key
+                      .map(
+                        (index, task) => MapEntry(
+                          index,
+                          FortuneItem(
+                            
+                            onTap: () {
+                              Navigator.of(context).push(
+                                PageRouteBuilder(
+                                  opaque: false,
+                                  barrierDismissible: true,
+                                  transitionDuration: Duration(milliseconds: 600),
+                                  pageBuilder: (_, __, ___) {
+                                  return EditTaskPopup(tasksDataProvider: widget.tasksDataProvider, taskWheelUINotifier: widget.taskWheelUINotifier, editingTask: task,);
+                                },
+                              ));
                             },
-                          ));
-                          },
-                          style: FortuneItemStyle(
-                            color: AppColors.context(context).primaryColor.withAlpha(
-                              (255 * (index + 1) / upToDateCurrentTasks.tasks.length).round(),
+                            style: FortuneItemStyle(
+                              color: AppColors.context(context).primaryColor.withAlpha(
+                                (255 * (index + 1) / upToDateCurrentTasks.tasks.length).round(),
+                              ),
                             ),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Flexible(
-                                  child: Text(
-                                    task.title,
-                                    style: Theme.of(
-                                      context,
-                                    ).textTheme.labelLarge?.copyWith(
-                                      color: AppColors.context(context).textColor,
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Flexible(
+                                    child: Text(
+                                      task.title,
+                                      style: Theme.of(
+                                        context,
+                                      ).textTheme.labelLarge?.copyWith(
+                                        color: AppColors.context(context).textColor,
+                                      ),
                                     ),
                                   ),
-                                ),
-                                Hero(
-                                  tag: "EditTaskPopup${task.id}",
-                                  child: CircleAvatar(
-                                    radius: 1,
-                                    backgroundColor: AppColors.context(context).primaryColor.withAlpha(
-                                      (255 * (index + 1) / upToDateCurrentTasks.tasks.length).round(),
+                                  Hero(
+                                    tag: "EditTaskPopup${task.id}",
+                                    child: CircleAvatar(
+                                      radius: 1,
+                                      backgroundColor: Colors.transparent
                                     ),
-                                  ),
-                                )
-                              ],
+                                  )
+                                ],
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    )
-                    .values
-                    .toList(),
+                      )
+                      .values
+                      .toList(),
           ),
         );
       },
