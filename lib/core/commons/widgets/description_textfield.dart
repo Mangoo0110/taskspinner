@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 
-class DescriptionTextfield extends StatelessWidget {
+class DescriptionTextfield extends StatefulWidget {
   final TextEditingController controller;
   final Function (String text) onChanged;
   final String hintText;
@@ -15,7 +15,20 @@ class DescriptionTextfield extends StatelessWidget {
     required this.labelText,
     super.key
     });
+
+  @override
+  State<DescriptionTextfield> createState() => _DescriptionTextfieldState();
+}
+
+class _DescriptionTextfieldState extends State<DescriptionTextfield> {
   final FocusNode _focusNode = FocusNode(); 
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    _focusNode.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,14 +38,17 @@ class DescriptionTextfield extends StatelessWidget {
           _focusNode.unfocus();
         },
         focusNode: _focusNode,
-        maxLines: maxLines,
-        controller: controller,
+        keyboardType: TextInputType.multiline,
+        textInputAction: TextInputAction.newline,
+        //maxLines: null, // Allow multi-line input
+        maxLines: widget.maxLines,
+        controller: widget.controller,
         decoration: InputDecoration(
           floatingLabelBehavior: FloatingLabelBehavior.auto,
           alignLabelWithHint: false,
           constraints: BoxConstraints(minHeight: constraints.maxHeight),
-          hintText: hintText,
-          label: Text(labelText),
+          hintText: widget.hintText,
+          label: Text(widget.labelText),
           labelStyle: Theme.of(context).textTheme.titleMedium,
           hintStyle: const TextStyle(color: Colors.grey, fontWeight: FontWeight.w600),
           border: OutlineInputBorder(
@@ -56,7 +72,7 @@ class DescriptionTextfield extends StatelessWidget {
           ),
         ),
         onChanged: (value) {
-          onChanged(value);
+          widget.onChanged(value);
           
         },
       ),

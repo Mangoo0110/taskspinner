@@ -68,6 +68,7 @@ class TaskWheelUINotifier extends ChangeNotifier {
   }
 
   static final List<WheelTask> _dummyTasks = WheelTask.dummies;
+  final int _leastTasksForWheel = WheelTask.dummies.length;
   
   UpToDateCurrentTasks _upToDateCurrentTasks = UpToDateCurrentTasks(_dummyTasks);
   UpToDateCurrentTasks get upToDateCurrentTasks => _upToDateCurrentTasks;
@@ -84,7 +85,7 @@ class TaskWheelUINotifier extends ChangeNotifier {
     } 
     // Add dummies until task length is greater than equal 2.
     int dumIndex = 0;
-    while(tasks.length < 2 && (dumIndex < _dummyTasks.length)) {
+    while(tasks.length < _leastTasksForWheel && (dumIndex < _dummyTasks.length)) {
       tasks.add(_dummyTasks[dumIndex]);
       dumIndex++;
     }

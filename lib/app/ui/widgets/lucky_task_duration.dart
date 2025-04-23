@@ -27,7 +27,7 @@ class _LuckyTaskDurationState extends State<LuckyTaskDuration> {
 
     Timer.periodic(Duration(milliseconds: 500), (timer) {
       _cnt++;
-      if(_cnt == 1) {
+      if(_cnt == 1 && mounted && context.mounted) {
         _duration = widget.minuteDuration.clamp(0, 60);
         timer.cancel();
         setState(() {
@@ -82,7 +82,7 @@ class _LuckyTaskDurationState extends State<LuckyTaskDuration> {
               height: 15,
               width: width,
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Colors.transparent,
                 borderRadius: AppSizes.maxCircularRadius,
                 border: Border.all(color: Theme.of(context).primaryColor, width: 2),
               ),
@@ -95,28 +95,12 @@ class _LuckyTaskDurationState extends State<LuckyTaskDuration> {
                     height: double.infinity,
                     decoration: BoxDecoration(
                       color: Theme.of(context).primaryColor,
-                      borderRadius: AppSizes.maxCircularRadius,
+                      borderRadius: _duration < 60 ?
+                       AppSizes.maxCircularRadius.copyWith(topRight: Radius.circular(0), bottomRight: Radius.circular(0))
+                      : AppSizes.maxCircularRadius
                     ),
                   ),
-                  // Vertical dividers
-                  Positioned(
-                    left: width * (5 / 60),
-                    top: 0,
-                    bottom: 0,
-                    child: Container(
-                      width: 2,
-                      color: AppColors.context(context).textGreyColor,
-                    ),
-                  ),
-                  Positioned(
-                    left: width * (30 / 60),
-                    top: 0,
-                    bottom: 0,
-                    child: Container(
-                      width: 2,
-                      color: AppColors.context(context).textGreyColor,
-                    ),
-                  ),
+                  
                 ],
               ),
             );

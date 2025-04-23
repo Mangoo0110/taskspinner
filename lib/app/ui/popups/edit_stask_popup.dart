@@ -85,8 +85,12 @@ class _EditTaskPopupState extends State<EditTaskPopup> {
           return LayoutBuilder(
             builder: (context, constraints) {
               return GestureDetector(
-                onTap: () {
-                  Navigator.pop(context);
+                onTap: () async{
+                  await AppServices.physicalFeedback.availableFeedbacks();
+                  if(context.mounted && mounted) {
+                    Navigator.pop(context);
+                  }
+                  
                 },
                 child: Dialog(
                   backgroundColor: Colors.transparent, // Transparent background for blur effect
@@ -213,9 +217,6 @@ class _EditTaskPopupState extends State<EditTaskPopup> {
                 },
               ),
             ),
-        
-            
-        
             // task delete button
             if(widget.editingTask != null) Column(
               children: [
@@ -249,13 +250,13 @@ class _EditTaskPopupState extends State<EditTaskPopup> {
           height: 60,
           width: constraints.maxWidth,
           child: CustomTextfield(
-            maxLines: 2,
+            maxLines: 1,
             hintText: "Task title",
             labelText: "Title",
             onSubmit: () {
             },
             onChanged: (text) {
-              print(text);
+              dekhao(text);
             },
             validationCheck: (text) {},
             controller: _taskNameController,

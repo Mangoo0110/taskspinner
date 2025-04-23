@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:taskspinner/app/ui/controllers/task_wheel_ui_notifier.dart';
-import 'package:taskspinner/app/ui/popups/task_list_popup.dart';
+import 'package:taskspinner/app/ui/popups/task_type_list_popup.dart';
 import 'package:taskspinner/core/commons/enums/tasktype.dart';
 import '../../../core/commons/widgets/custom_button.dart';
 import '../../../utils/constants/app_colors.dart';
@@ -8,14 +8,14 @@ import '../../../utils/constants/app_sizes.dart';
 
 
 
-class SelectTaskAndShowButton extends StatefulWidget {
+class TaskTypeButton extends StatefulWidget {
   final TaskWheelUINotifier taskWheelUINotifier;
-  const SelectTaskAndShowButton({super.key, required this.taskWheelUINotifier});
+  const TaskTypeButton({super.key, required this.taskWheelUINotifier});
   @override
-  State<SelectTaskAndShowButton> createState() => _SelectTaskAndShowButtonState();
+  State<TaskTypeButton> createState() => _TaskTypeButtonState();
 }
 
-class _SelectTaskAndShowButtonState extends State<SelectTaskAndShowButton> {
+class _TaskTypeButtonState extends State<TaskTypeButton> {
   late TaskType currentTaskType;
 
   @override
@@ -91,7 +91,7 @@ class _SelectTaskAndShowButtonState extends State<SelectTaskAndShowButton> {
         opaque: false,
         barrierDismissible: true,
         pageBuilder: (_, __, ___) {
-          return TaskListPopup(taskWheelUINotifier: widget.taskWheelUINotifier,);
+          return TasktypeListPopup(taskWheelUINotifier: widget.taskWheelUINotifier,);
       },
     ));
   }

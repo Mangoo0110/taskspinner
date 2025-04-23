@@ -88,15 +88,15 @@ class _SelectThemeModeState extends State<SelectThemeMode> {
   }
 
   Widget _themeMode({required ThemeMode mode, required bool isSelected, required Function() onTap}) {
-    return GestureDetector(
-      onTap: () {
-        // Handle theme mode selection
-        onTap();
-      },
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Container(
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        CustomButton(
+          borderRadius: AppSizes.maxCircularRadius,
+          onTap: () {
+            onTap();
+          },
+          child: Container(
             height: 30,
             width: 30,
             decoration: BoxDecoration(
@@ -111,10 +111,10 @@ class _SelectThemeModeState extends State<SelectThemeMode> {
               child: isSelected ? const Icon(Icons.check, color: Colors.white,) : null,
             ),
           ),
-          const SizedBox(width: 10),
-          Text(mode.themeName, style: Theme.of(context).textTheme.labelLarge),
-        ],
-      ),
+        ),
+        const SizedBox(width: 10),
+        Text(mode.themeName, style: Theme.of(context).textTheme.labelLarge),
+      ],
     );
   }
 }

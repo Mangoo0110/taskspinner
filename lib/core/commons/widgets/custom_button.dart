@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:taskspinner/utils/constants/app_colors.dart';
 
+import '../../services/app_services.dart';
+
+
+///* Gives available feedbacks on tap.
 class CustomButton extends StatefulWidget {
   final Widget child;
   final Size? size;
@@ -35,10 +39,13 @@ class _CustomButtonState extends State<CustomButton> {
             onTap:
                 widget.onTap == null
                     ? null
-                    : () {
+                    : () async{
                       
-                      Future.delayed(Duration(milliseconds: 500)).then((_) {
-                        widget.onTap!();   
+                      await Future.delayed(Duration(milliseconds: 500)).then((_) async{
+                        await AppServices.physicalFeedback.availableFeedbacks();
+                          if(context.mounted && mounted) {
+                            widget.onTap!();
+                          }
                       });
                     },
 

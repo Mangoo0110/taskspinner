@@ -35,9 +35,9 @@ class PhysicalFeedback {
     
   }
 
-  Future<void> tick() async{
+  Future<void> tick({bool? force}) async{
     try {
-      if(_setting.tickSound) {
+      if(_setting.tickSound || force == true) {
         dekhao("ticking..");
         await _audioPlayer.seek(Duration.zero); // rewind
         await _audioPlayer.play();              // fire-and-forget
@@ -47,9 +47,9 @@ class PhysicalFeedback {
     }
   }
 
-  Future<void> vibrate({HapticImpact? impact}) async{
+  Future<void> vibrate({HapticImpact? impact, bool? force}) async{
     try {
-      if(_setting.hapticImpact) {
+      if(_setting.hapticImpact && force == true) {
         impact ??= HapticImpact.heavy;
         switch (impact) {
           case HapticImpact.light:

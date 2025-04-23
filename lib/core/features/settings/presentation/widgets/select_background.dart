@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:taskspinner/core/commons/widgets/custom_button.dart';
 import 'package:taskspinner/utils/constants/app_colors.dart';
 import '../notifiers/settings_data_provider.dart';
 import '../../../../../utils/constants/app_sizes.dart';
@@ -83,7 +84,8 @@ class _SelectBackgroundImageState extends State<SelectBackgroundImage> {
   }
 
   Widget _imageCardSelector({required String imagePath, required bool isSelected, required Function() onTap}) {
-    return GestureDetector(
+    return CustomButton(
+      borderRadius: AppSizes.smallBorderRadius,
       onTap: () {
         // Handle image selection
         onTap();

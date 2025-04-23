@@ -4,6 +4,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:taskspinner/app/ui/widgets/lucky_task_duration.dart';
 import '../../../core/commons/widgets/popup_okay_button.dart';
+import '../../../core/services/app_services.dart';
 import '../../domain/entities/wheel_task.dart';
 import '../../../utils/constants/app_colors.dart';
 import '../../../utils/constants/app_sizes.dart';
@@ -25,8 +26,11 @@ class _LuckyTaskPopupState extends State<LuckyTaskPopup> {
           return LayoutBuilder(
             builder: (context, constraints) {
               return GestureDetector(
-                onTap: () {
-                  Navigator.pop(context);
+                onTap: () async{
+                  await AppServices.physicalFeedback.availableFeedbacks();
+                  if(context.mounted && mounted) {
+                    Navigator.pop(context);
+                  }
                 },
                 child: Material(
                   color: Colors.transparent,
@@ -47,51 +51,57 @@ class _LuckyTaskPopupState extends State<LuckyTaskPopup> {
                         Center(
                           child: Hero(
                             tag: "LuckyTask",
-                            child: Container(
-                              padding: EdgeInsets.symmetric(vertical: 30, horizontal: 20),
-                              decoration: BoxDecoration(
-                                color: AppColors.context(context).popupBackgroundColor,
-                                borderRadius: BorderRadius.circular(15),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withAlpha(2),
-                                    spreadRadius: 3,
-                                    blurRadius: 7,
-                                  ),
-                                ],
-                              ),
-                              child: SingleChildScrollView(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    // task input
-                                    Text(
-                                      widget.luckyTask.title,
-                                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                        color: AppColors.context(context).popupContentColor,
-                                      ),
+                            child: GestureDetector(
+                              onTap: () {
+                                
+                              },
+                              child: Container(
+                                padding: EdgeInsets.symmetric(vertical: 30, horizontal: 20),
+                                decoration: BoxDecoration(
+                                  color: AppColors.context(context).popupBackgroundColor,
+                                  borderRadius: BorderRadius.circular(15),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withAlpha(2),
+                                      spreadRadius: 3,
+                                      blurRadius: 7,
                                     ),
-                                    //gap
-                                    SizedBox(height: 16),
-                                    // duration
-                                    LuckyTaskDuration(
-                                      minuteDuration: widget.luckyTask.minuteDuration,
-                                    ),
-                                    // gap
-                                    SizedBox(height: 10),
-                                    _details(luckyTask: widget.luckyTask),
-                                    // gap
-                                    SizedBox(height: 16),
-                                    // done/okay button
-                                    PopupOkayButton(
-                                      onTap: () {
-                                        Navigator.pop(context);
-                                      },
-                                    )
                                   ],
                                 ),
-                            
+                                child: SingleChildScrollView(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      // task input
+                                      Text(
+                                        widget.luckyTask.title,
+                                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                          color: AppColors.context(context).popupContentColor,
+                                        ),
+                                      ),
+                                      //gap
+                                      SizedBox(height: 16),
+                                      
+                                      // duration
+                                      LuckyTaskDuration(
+                                        minuteDuration: widget.luckyTask.minuteDuration,
+                                      ),
+                                      // gap
+                                      SizedBox(height: 10),
+                                      _details(luckyTask: widget.luckyTask),
+                                      // gap
+                                      SizedBox(height: 16),
+                                      // done/okay button
+                                      PopupOkayButton(
+                                        onTap: () {
+                                          if(mounted && context.mounted) Navigator.pop(context);
+                                        },
+                                      )
+                                    ],
+                                  ),
+                              
+                                ),
                               ),
                             ),
                           ),
@@ -106,6 +116,7 @@ class _LuckyTaskPopupState extends State<LuckyTaskPopup> {
       },
     );
   }
+
 
   Widget _details({required WheelTask luckyTask}) {
     return LayoutBuilder(

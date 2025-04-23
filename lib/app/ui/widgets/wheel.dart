@@ -12,6 +12,7 @@ import 'package:taskspinner/core/helpers/dekhao.dart';
 import 'package:taskspinner/utils/constants/app_colors.dart';
 
 import '../../../core/helpers/physical_feedback.dart';
+import '../../../core/services/app_services.dart';
 
 
 class Wheel extends StatefulWidget {
@@ -31,6 +32,8 @@ class _WheelState extends State<Wheel> {
   late TaskType currentTaskType;
   late UpToDateCurrentTasks upToDateCurrentTasks;
   late Setting setting;
+  DateTime lastTickTime = DateTime.now();
+  final Duration minTickInterval = Duration(milliseconds: 80); 
 
 
   @override
@@ -92,6 +95,7 @@ class _WheelState extends State<Wheel> {
             // )
             // : 
             FortuneWheel(
+              //key: GlobalKey(debugLabel: "WheelOfTasks"),
               hapticImpact: HapticImpact.heavy,
               physics: NoPanPhysics(),
               animateFirst: false,
@@ -104,13 +108,17 @@ class _WheelState extends State<Wheel> {
                   ),
                 ),
               ],
-              onFocusItemChanged: (value) {
-                widget.physicalFeedback.availableFeedbacks();
-                dekhao("Throw feedback");
+              onFocusItemChanged: (value) async{
+                if(DateTime.now().difference(lastTickTime) > minTickInterval) {
+                  await widget.physicalFeedback.availableFeedbacks();
+                  lastTickTime = DateTime.now();
+                  dekhao("Throw feedback");
+                }
+                
               },
               selected: widget.taskWheelUINotifier.wheelStreamcontroller.stream,
-              onAnimationEnd: () {
-                widget.physicalFeedback.availableFeedbacks();
+              onAnimationEnd: () async{
+                await widget.physicalFeedback.availableFeedbacks();
                 widget.taskWheelUINotifier.onAnimationEnd();
               },
               items:
@@ -121,16 +129,19 @@ class _WheelState extends State<Wheel> {
                           index,
                           FortuneItem(
                             
-                            onTap: () {
-                              Navigator.of(context).push(
-                                PageRouteBuilder(
-                                  opaque: false,
-                                  barrierDismissible: true,
-                                  transitionDuration: Duration(milliseconds: 600),
-                                  pageBuilder: (_, __, ___) {
-                                  return EditTaskPopup(tasksDataProvider: widget.tasksDataProvider, taskWheelUINotifier: widget.taskWheelUINotifier, editingTask: task,);
-                                },
-                              ));
+                            onTap: () async{
+                              await AppServices.physicalFeedback.availableFeedbacks();
+                              if(context.mounted && mounted) {
+                                Navigator.of(context).push(
+                                  PageRouteBuilder(
+                                    opaque: false,
+                                    barrierDismissible: true,
+                                    transitionDuration: Duration(milliseconds: 600),
+                                    pageBuilder: (_, __, ___) {
+                                    return EditTaskPopup(tasksDataProvider: widget.tasksDataProvider, taskWheelUINotifier: widget.taskWheelUINotifier, editingTask: task,);
+                                  },
+                                ));
+                              }
                             },
                             style: FortuneItemStyle(
                               color: AppColors.context(context).primaryColor.withAlpha(

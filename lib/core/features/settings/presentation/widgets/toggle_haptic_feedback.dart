@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:taskspinner/core/services/app_services.dart';
 import '../notifiers/settings_data_provider.dart';
 import '../../../../../utils/constants/app_sizes.dart';
 
@@ -75,8 +76,10 @@ class _ToggleHapticFeedbackState extends State<ToggleHapticFeedback> {
           
               Switch(
                 value: _hapticImpact,
-                onChanged: (value) {
-                  _saveSetting(hapticImpact: value);
+                onChanged: (value) async{
+                  await _saveSetting(hapticImpact: value).then((_) async{
+                    await AppServices.physicalFeedback.availableFeedbacks();
+                  });
                 },
               )
             ],

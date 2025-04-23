@@ -19,6 +19,10 @@ void main() async{
       statusBarIconBrightness: Brightness.light,
     ),
   );
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
    SystemChrome.setEnabledSystemUIMode(
     SystemUiMode.edgeToEdge,
   );
@@ -57,6 +61,13 @@ class _MyAppState extends State<MyApp> {
       }
     });
     super.didChangeDependencies();
+  }
+
+  @override
+  void dispose() async{
+    // TODO: implement dispose
+    await AppServices.dispose();
+    super.dispose();
   }
   // This widget is the root of your application.
   @override

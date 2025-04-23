@@ -17,7 +17,7 @@ class AppServices {
     await physicalFeedback.init();
   }
 
-  Future<void> dispose() async {
+  static Future<void> dispose() async {
     tasksProvider.dispose();
     settingsDataProvider.dispose();
     await physicalFeedback.dispose();

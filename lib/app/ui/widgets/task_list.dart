@@ -73,8 +73,11 @@ class _TaskListState extends State<TaskList> {
                     color: AppColors.context(context).backgroundColor,
                     borderRadius: AppSizes.verySmallBorderRadius
                   ),
-                  child: Center(
-                    child: Text(upToDateCurrentTasks.tasks[index].title, maxLines: 4, style: Theme.of(context).textTheme.labelLarge, overflow: TextOverflow.ellipsis, ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Center(
+                      child: Text(upToDateCurrentTasks.tasks[index].title, maxLines: 4, style: Theme.of(context).textTheme.labelLarge, overflow: TextOverflow.ellipsis, ),
+                    ),
                   ),
                 ),
               );

@@ -47,7 +47,7 @@ class _SaveButtonState extends State<SaveButton> {
           dekhao("Successful save");
           Future.delayed(const Duration(milliseconds: 1000)).then((_) async{
             await AppServices.physicalFeedback.availableFeedbacks();
-            if(context.mounted && mounted) {
+            if(mounted && context.mounted) {
               widget.onDone();
             }
           });
@@ -167,7 +167,7 @@ class _SaveButtonState extends State<SaveButton> {
                 Icon(
                   Icons.done,
                   size: AppSizes.mediumIconSize,
-                  color: AppColors.context(context).activeButtonColor,
+                  color: AppColors.context(context).buttonContentColor,
                 ),
                 SizedBox(width: 10),
                 Text(

@@ -27,12 +27,14 @@ class PopupOkayButton extends StatelessWidget {
             color: Colors.transparent,
             borderRadius: AppSizes.maxCircularRadius,
             child: InkWell(
-              splashColor: AppColors.context(context).textColor,
+              splashColor: AppColors.context(context).popupBackgroundColor,
               borderRadius: AppSizes.maxCircularRadius,
               onTap: () async{
-                await AppServices.physicalFeedback.availableFeedbacks();
-                Future.delayed(Duration(milliseconds: 500)).then((_) {
-                  onTap();
+                
+                await Future.delayed(Duration(milliseconds: 500)).then((_) async{
+                  await AppServices.physicalFeedback.availableFeedbacks().then((_) {
+                    onTap();
+                  });
                 });
               },
               child: Center(

@@ -37,6 +37,15 @@ class WheelTask {
       createdAt: DateTime.now(),
     )
     .._isDummy = true,
+    
+    WheelTask(
+      id: DateTime.now().add(Duration(milliseconds: 80)).millisecondsSinceEpoch.toString(),
+      title: "CLean",
+      details: "Start with living room, then study room, then the kitchen.",
+      minuteDuration: 1,
+      createdAt: DateTime.now(),
+    )
+    .._isDummy = true,
   ];
 
   WheelTask copyWith({

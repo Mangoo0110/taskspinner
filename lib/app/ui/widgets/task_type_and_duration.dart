@@ -1,7 +1,9 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:taskspinner/core/commons/enums/tasktype.dart';
+import 'package:taskspinner/core/helpers/dekhao.dart';
 import 'package:taskspinner/utils/constants/app_colors.dart';
 import 'package:taskspinner/utils/constants/app_sizes.dart';
 
@@ -22,11 +24,34 @@ class TaskTypeAndDuration extends StatefulWidget {
 class _TaskTypeAndDurationState extends State<TaskTypeAndDuration> {
   late int _duration;
   late TextEditingController _controller;
+  int _initialLoadCnt = 0;
+
+  @override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+
+    Timer.periodic(Duration(milliseconds: 800), (timer) {
+      _initialLoadCnt++;
+      dekhao("Timer is on..");
+      if(_initialLoadCnt == 1) {
+        _duration = widget.initialDuration.clamp(0, 60);
+        timer.cancel();
+        if(mounted && context.mounted) {
+          setState(() {
+            
+          });
+        }
+      }
+    });
+    
+    
+    super.didChangeDependencies();
+  }
 
   @override
   void initState() {
     super.initState();
-    _duration = widget.initialDuration.clamp(0, 60);
+    _duration = (1).clamp(0, 60);
     _controller = TextEditingController(text: _duration.toString());
   }
 
@@ -91,20 +116,6 @@ class _TaskTypeAndDurationState extends State<TaskTypeAndDuration> {
 
           ],
         ),
-        // TextField(
-        //   controller: _controller,
-        //   keyboardType: TextInputType.number,
-        //   decoration: const InputDecoration(
-        //     labelText: "Duration (minutes)",
-        //     border: OutlineInputBorder(),
-        //   ),
-        //   onChanged: (val) {
-        //     final parsed = int.tryParse(val);
-        //     if (parsed != null) {
-        //       _updateDuration(parsed);
-        //     }
-        //   },
-        // ),
         const SizedBox(height: 10),
         LayoutBuilder(
           builder: (context, constraints) {
@@ -119,7 +130,7 @@ class _TaskTypeAndDurationState extends State<TaskTypeAndDuration> {
                 height: 20,
                 width: width,
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Colors.transparent,
                   borderRadius: AppSizes.maxCircularRadius,
                   border: Border.all(color: Theme.of(context).primaryColor, width: 2),
                 ),
@@ -132,7 +143,9 @@ class _TaskTypeAndDurationState extends State<TaskTypeAndDuration> {
                       height: double.infinity,
                       decoration: BoxDecoration(
                         color: Theme.of(context).primaryColor,
-                        borderRadius: AppSizes.maxCircularRadius,
+                        borderRadius: _duration < 59 ?
+                        AppSizes.maxCircularRadius.copyWith(topRight: Radius.circular(0), bottomRight: Radius.circular(0))
+                        : AppSizes.maxCircularRadius
                       ),
                     ),
                     // Vertical dividers

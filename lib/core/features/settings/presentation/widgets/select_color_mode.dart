@@ -1,6 +1,8 @@
 
 import 'package:flutter/material.dart';
+import 'package:taskspinner/core/commons/widgets/custom_button.dart';
 import 'package:taskspinner/utils/constants/app_colors.dart';
+import 'package:taskspinner/utils/constants/app_sizes.dart';
 import '../notifiers/settings_data_provider.dart';
 
 
@@ -79,7 +81,8 @@ class _SelectColorModeState extends State<SelectColorMode> {
   }
 
   Widget _color({required PrimaryColorMode appColorMode, required Function() onTap}) {
-    return GestureDetector(
+    return CustomButton(
+      borderRadius: AppSizes.maxCircularRadius,
       onTap: () {
         // Handle color mode selection
         onTap();

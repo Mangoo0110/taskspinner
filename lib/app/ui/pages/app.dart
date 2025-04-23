@@ -11,7 +11,7 @@ import 'package:taskspinner/core/services/app_services.dart';
 import '../../../core/commons/widgets/custom_button.dart';
 import '../../../utils/constants/app_colors.dart';
 import '../../../utils/constants/app_names.dart';
-import '../widgets/select_task_and_show_button.dart';
+import '../widgets/task_type_button.dart';
 import '../widgets/wheel.dart';
 
 
@@ -33,9 +33,16 @@ class _SpinnerTaskAppState extends State<SpinnerTaskApp> {
     tasksDataProvider: AppServices.tasksProvider
   );
 
+  bool _isThereAPopUp = false;
+  DateTime lastTickTime = DateTime.now();
+  final Duration minTickInterval = Duration(milliseconds: 500);
+
   @override
   void dispose() {
     // TODO: implement dispose
+    if(mounted && !controller.isClosed) {
+      controller.close();
+    }
     super.dispose();
   }
   @override
@@ -43,15 +50,9 @@ class _SpinnerTaskAppState extends State<SpinnerTaskApp> {
     return LayoutBuilder(
       builder:
           (context, constraints) => Scaffold(
-            //backgroundColor: Colors.transparent,
             resizeToAvoidBottomInset: false,
-            // appBar: AppBar(
-            //   title: Center(child: Text(AppNames.appName)),
-            // ),
-
             body: Stack(
               alignment: AlignmentDirectional.topCenter,
-              //mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Positioned(
                   top: 0,
@@ -88,7 +89,7 @@ class _SpinnerTaskAppState extends State<SpinnerTaskApp> {
                       //Text(AppNames.appName, style: Theme.of(context).textTheme.titleLarge,),
                       const SizedBox(height: 10,),
                       Center(
-                        child: SelectTaskAndShowButton(taskWheelUINotifier: taskWheelUINotifier,),
+                        child: TaskTypeButton(taskWheelUINotifier: taskWheelUINotifier,),
                       ),
                     ],
                   ),
@@ -201,8 +202,11 @@ class _SpinnerTaskAppState extends State<SpinnerTaskApp> {
     );
   }
 
-  void _showSettingsDialog(BuildContext context) {
-    Navigator.of(context).push(
+  void _showSettingsDialog(BuildContext context) async{
+    if(_isThereAPopUp && DateTime.now().difference(lastTickTime) <= minTickInterval) return;
+    _isThereAPopUp = true;
+    lastTickTime = DateTime.now();
+    await Navigator.of(context).push(
       PageRouteBuilder(
         opaque: false,
         barrierDismissible: true,
@@ -211,10 +215,15 @@ class _SpinnerTaskAppState extends State<SpinnerTaskApp> {
           settingsDataProvider: AppServices.settingsDataProvider,
         );
       },
-    ));
+    )).then((any) {
+      _isThereAPopUp = false;
+    });
   }
 
-  void _showAddTaskDialog(BuildContext context) {
+  void _showAddTaskDialog(BuildContext context) async{
+    if(_isThereAPopUp && DateTime.now().difference(lastTickTime) <= minTickInterval) return;
+    _isThereAPopUp = true;
+    lastTickTime = DateTime.now();
     Navigator.of(context).push(
       PageRouteBuilder(
         opaque: false,
@@ -222,7 +231,9 @@ class _SpinnerTaskAppState extends State<SpinnerTaskApp> {
         pageBuilder: (_, __, ___) {
           return EditTaskPopup(tasksDataProvider: AppServices.tasksProvider, taskWheelUINotifier: taskWheelUINotifier);
       },
-    ));
+    )).then((any) {
+      _isThereAPopUp = false;
+    });
   }
 
   

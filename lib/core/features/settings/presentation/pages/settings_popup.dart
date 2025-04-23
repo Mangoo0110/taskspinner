@@ -1,9 +1,11 @@
+import 'dart:math';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:taskspinner/core/commons/widgets/custom_button.dart';
 import 'package:taskspinner/core/features/settings/presentation/widgets/toggle_sound_feedback.dart';
 import 'package:taskspinner/utils/constants/app_colors.dart';
+import '../../../../services/app_services.dart';
 import '../notifiers/settings_data_provider.dart';
 import '../../../../../utils/constants/app_sizes.dart';
 import '../widgets/select_background.dart';
@@ -22,8 +24,11 @@ class SettingsPopup extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         return GestureDetector(
-          onTap: () {
-            Navigator.pop(context);
+          onTap: () async{
+            await AppServices.physicalFeedback.availableFeedbacks();
+            if(context.mounted) {
+              Navigator.pop(context);
+            }
           },
           child: Material(
             color: Colors.transparent,
@@ -46,39 +51,42 @@ class SettingsPopup extends StatelessWidget {
                       onTap: () {
                         
                       },
-                      child: AnimatedContainer(
-                        duration: Duration(milliseconds: 350),
-                        padding: const EdgeInsets.all(20),
-                        decoration: BoxDecoration(
-                          color: AppColors.context(context).popupBackgroundColor,
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: SingleChildScrollView(
+                      child: ClipRect(
+                        child: AnimatedContainer(
+                          constraints: BoxConstraints(
+                            maxWidth: constraints.maxWidth - 20,
+                            maxHeight: min(constraints.maxHeight - 40, 650)
+                          ),
+                          duration: Duration(milliseconds: 350),
+                          padding: const EdgeInsets.only(left: 20, right: 20, top: 20,),
+                          decoration: BoxDecoration(
+                            color: AppColors.context(context).popupBackgroundColor,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
                           child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(Icons.settings, size: AppSizes.largeIconSize, color: AppColors.context(context).primaryColor),
-                                  const SizedBox(width: 5),
-                                  Text("Settings", style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                    fontStyle: FontStyle.normal, color: AppColors.context(context).primaryColor,
-                                  )),
-                                ],
+                              _header(),
+                              Flexible(
+                                child: ListView(
+                                  // crossAxisAlignment: CrossAxisAlignment.start,
+                                  // mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    
+                                    const SizedBox(height: 0),
+                                    SelectThemeMode(settingsDataProvider: settingsDataProvider,),
+                                    const SizedBox(height: 30),
+                                    SelectColorMode(settingsDataProvider: settingsDataProvider),
+                                    const SizedBox(height: 30),
+                                    SelectBackgroundImage(settingsDataProvider: settingsDataProvider,),
+                                    const SizedBox(height: 30),
+                                    ToggleSoundFeedback(settingsDataProvider: settingsDataProvider,),
+                                    const SizedBox(height: 5),
+                                    ToggleHapticFeedback(settingsDataProvider: settingsDataProvider,),
+                                    const SizedBox(height: 10),
+                                  ],
+                                ),
                               ),
-                              const SizedBox(height: 40),
-                              SelectThemeMode(settingsDataProvider: settingsDataProvider,),
-                              const SizedBox(height: 30),
-                              SelectColorMode(settingsDataProvider: settingsDataProvider),
-                              const SizedBox(height: 30),
-                              SelectBackgroundImage(settingsDataProvider: settingsDataProvider,),
-                              const SizedBox(height: 30),
-                              ToggleSoundFeedback(settingsDataProvider: settingsDataProvider,),
-                              const SizedBox(height: 5),
-                              ToggleHapticFeedback(settingsDataProvider: settingsDataProvider,),
-                              const SizedBox(height: 10),
                             ],
                           ),
                         ),
@@ -88,6 +96,29 @@ class SettingsPopup extends StatelessWidget {
                 ],
               ),
             ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _header() {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return Align(
+          alignment: Alignment.center,
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.settings, size: AppSizes.largeIconSize, color: AppColors.context(context).primaryColor),
+                  const SizedBox(width: 5),
+                  Text("Settings", style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    fontStyle: FontStyle.normal, color: AppColors.context(context).primaryColor,
+                  )),
+                ],
+              ),
           ),
         );
       },

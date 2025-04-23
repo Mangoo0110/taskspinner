@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
-class CustomTextfield extends StatelessWidget {
+import '../../helpers/dekhao.dart';
+
+class CustomTextfield extends StatefulWidget {
   final TextEditingController controller;
   final Function(String text) onChanged;
   final Function(String text) validationCheck;
@@ -9,7 +11,7 @@ class CustomTextfield extends StatelessWidget {
   final int? maxLines;
   final VoidCallback onSubmit;
   
-  CustomTextfield({
+  const CustomTextfield({
     required this.maxLines,
     required this.onChanged,
     required this.controller,
@@ -18,10 +20,26 @@ class CustomTextfield extends StatelessWidget {
     required this.validationCheck,
     super.key, required this.onSubmit,
   });
+
+  @override
+  State<CustomTextfield> createState() => _CustomTextfieldState();
+}
+
+class _CustomTextfieldState extends State<CustomTextfield> {
   final FocusNode _focusNode = FocusNode();
+  int cnt =0;
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    _focusNode.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
+    cnt++;
+    dekhao("Build time is $cnt");
     return LayoutBuilder(
       builder:
           (context, constraints) => TextFormField(
@@ -29,22 +47,24 @@ class CustomTextfield extends StatelessWidget {
               _focusNode.unfocus();
             },
             focusNode: _focusNode,
-            maxLines: maxLines,
-            controller: controller,
+            maxLines: widget.maxLines,
+            controller: widget.controller,
             style: Theme.of(context).textTheme.bodyMedium,
             textAlign: TextAlign.left,
             textAlignVertical: TextAlignVertical.center,
             onFieldSubmitted: (value) {
-              print("onsubmit text field ${controller.text}");
-              onSubmit();
+              dekhao("onsubmit text field ${widget.controller.text}");
+              widget.onSubmit();
             },
+            
+            textInputAction: TextInputAction.next,
             decoration: InputDecoration(
-              floatingLabelBehavior: FloatingLabelBehavior.auto,
-              alignLabelWithHint: false,
+              
+              // floatingLabelBehavior: FloatingLabelBehavior.auto,
+              // alignLabelWithHint: false,
               constraints: BoxConstraints(minHeight: constraints.maxHeight),
-              hintText: hintText,
-              hintMaxLines: 1,
-              label: Text(labelText),
+              hintText: widget.hintText,
+              label: Text(widget.labelText),
               labelStyle: Theme.of(context).textTheme.titleMedium,
               hintStyle: const TextStyle(
                 color: Colors.grey,
@@ -65,10 +85,10 @@ class CustomTextfield extends StatelessWidget {
             ),
             
             onChanged: (value) {
-              onChanged(value);
+              widget.onChanged(value);
             },
             validator: (value) {
-              return validationCheck(value!);
+              return widget.validationCheck(value!);
             },
           ),
     );

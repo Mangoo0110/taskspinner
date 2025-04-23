@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import '../../../../services/app_services.dart';
 import '../notifiers/settings_data_provider.dart';
 import '../../../../../utils/constants/app_sizes.dart';
 
@@ -76,8 +77,10 @@ class _ToggleSoundFeedbackState extends State<ToggleSoundFeedback> {
           
               Switch(
                 value: _tickSound,
-                onChanged: (value) {
-                  _saveSetting(tickSound: value);
+                onChanged: (value) async{
+                  await _saveSetting(tickSound: value).then((_) async{
+                    await AppServices.physicalFeedback.availableFeedbacks();
+                  });
                 },
               )
             ],
