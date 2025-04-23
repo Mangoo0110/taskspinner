@@ -42,10 +42,12 @@ class _CustomButtonState extends State<CustomButton> {
                     : () async{
                       
                       await Future.delayed(Duration(milliseconds: 500)).then((_) async{
-                        await AppServices.physicalFeedback.availableFeedbacks();
-                          if(context.mounted && mounted) {
+                        await AppServices.physicalFeedback.availableFeedbacks().then((_) {
+                          if(mounted && context.mounted) {
                             widget.onTap!();
                           }
+                        });
+                          
                       });
                     },
 

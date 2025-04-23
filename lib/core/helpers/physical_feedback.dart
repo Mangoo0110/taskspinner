@@ -49,7 +49,7 @@ class PhysicalFeedback {
 
   Future<void> vibrate({HapticImpact? impact, bool? force}) async{
     try {
-      if(_setting.hapticImpact && force == true) {
+      if(_setting.hapticImpact || force == true) {
         impact ??= HapticImpact.heavy;
         switch (impact) {
           case HapticImpact.light:
