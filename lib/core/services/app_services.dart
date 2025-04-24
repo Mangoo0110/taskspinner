@@ -13,8 +13,10 @@ class AppServices {
 
   static Future <void> init() async {
     await tasksProvider.init();
-    await settingsDataProvider.init();
-    await physicalFeedback.init();
+    await settingsDataProvider.init().then((_) async{
+      await physicalFeedback.init();
+    });
+    
   }
 
   static Future<void> dispose() async {

@@ -17,14 +17,27 @@ class TaskTypeButton extends StatefulWidget {
 
 class _TaskTypeButtonState extends State<TaskTypeButton> {
   late TaskType currentTaskType;
+  bool _isSpinning = false;
 
   @override
   void didChangeDependencies() {
     widget.taskWheelUINotifier.addListener(() {
-      if (mounted && context.mounted && currentTaskType != widget.taskWheelUINotifier.currentTaskType) {
-        currentTaskType = widget.taskWheelUINotifier.currentTaskType;
-        setState(() {});
+      if (mounted && context.mounted) {
+        if(currentTaskType != widget.taskWheelUINotifier.currentTaskType) {
+          currentTaskType = widget.taskWheelUINotifier.currentTaskType;
+           setState(() {});
+        }
+
+        if(widget.taskWheelUINotifier.isSpinning != _isSpinning) {
+          _isSpinning = widget.taskWheelUINotifier.isSpinning;
+          setState(() {
+            
+          });
+        }
+        
       }
+
+      
     });
     super.didChangeDependencies();
   }
@@ -44,7 +57,7 @@ class _TaskTypeButtonState extends State<TaskTypeButton> {
         return CustomButton(
           borderRadius: AppSizes.maxCircularRadius,
           onTap: () {
-            _showAllTaskDialog(context);
+            if(_isSpinning == false) _showAllTaskDialog(context);
           },
           child: Hero(
             tag: "TaskListPopup",
@@ -69,7 +82,8 @@ class _TaskTypeButtonState extends State<TaskTypeButton> {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(Icons.filter_alt, color: AppColors.context(context).textColor,),
+                      Icon(
+                        _isSpinning ? Icons.lock : Icons.filter_alt, color: AppColors.context(context).textColor,),
                       Padding(
                         padding: const EdgeInsets.only(left: 4.0),
                         child: Text(currentTaskType.name, style: Theme.of(context).textTheme.titleMedium,),

@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -33,7 +34,7 @@ class _WheelState extends State<Wheel> {
   late UpToDateCurrentTasks upToDateCurrentTasks;
   late Setting setting;
   DateTime lastTickTime = DateTime.now();
-  final Duration minTickInterval = Duration(milliseconds: 80); 
+  final Duration minTickInterval = Duration(milliseconds: 50); 
 
 
   @override
@@ -73,29 +74,8 @@ class _WheelState extends State<Wheel> {
         return SizedBox(
           height: min(constraints.maxWidth, constraints.maxHeight) ,
           width: min(constraints.maxWidth, constraints.maxHeight) ,
-          child: //upToDateCurrentTasks.tasks.length < 2 ?
-            // Container(
-            //   decoration: BoxDecoration(
-            //     boxShadow: [
-            //       // BoxShadow(
-            //       //   color: AppColors.context(context).shadowColor,
-            //       //   blurRadius: 10,
-            //       //   spreadRadius: 2,
-            //       //   offset: Offset(0, 4),
-            //       // ),
-            //     ]
-            //   ),
-            //   child: Center(
-            //     child: Text(
-            //       "Task wheel won't show up and rotate if tasks are less than 2 in number. Hurry up, add tasks and rotate to get your lucky tasks, now.", 
-            //       maxLines: 6,
-            //       style: Theme.of(context).textTheme.bodyLarge?.copyWith(),
-            //     ),
-            //   ),
-            // )
-            // : 
+          child:  
             FortuneWheel(
-              //key: GlobalKey(debugLabel: "WheelOfTasks"),
               hapticImpact: HapticImpact.heavy,
               physics: NoPanPhysics(),
               animateFirst: false,
@@ -109,8 +89,11 @@ class _WheelState extends State<Wheel> {
                 ),
               ],
               onFocusItemChanged: (value) async{
-                if(DateTime.now().difference(lastTickTime) > minTickInterval) {
-                  await widget.physicalFeedback.availableFeedbacks();
+                final interval = DateTime.now().difference(lastTickTime);
+                dekhao("Time interval is $interval");
+                if(interval > minTickInterval) {
+                  if(Platform.isAndroid) await widget.physicalFeedback.availableFeedbacks();
+                  if(Platform.isIOS) await widget.physicalFeedback.vibrate();
                   lastTickTime = DateTime.now();
                   dekhao("Throw feedback");
                 }
@@ -144,7 +127,7 @@ class _WheelState extends State<Wheel> {
                               }
                             },
                             style: FortuneItemStyle(
-                              color: AppColors.context(context).primaryColor.withAlpha(
+                              color: task.isDummy ? Colors.black.withAlpha(100): AppColors.context(context).primaryColor.withAlpha(
                                 (255 * (index + 1) / upToDateCurrentTasks.tasks.length).round(),
                               ),
                             ),
@@ -167,7 +150,7 @@ class _WheelState extends State<Wheel> {
                                     tag: "EditTaskPopup${task.id}",
                                     child: CircleAvatar(
                                       radius: 1,
-                                      backgroundColor: Colors.transparent
+                                      backgroundColor: Colors.transparent,
                                     ),
                                   )
                                 ],

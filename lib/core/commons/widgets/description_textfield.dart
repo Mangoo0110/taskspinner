@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../utils/constants/app_colors.dart';
+
 
 class DescriptionTextfield extends StatefulWidget {
   final TextEditingController controller;
@@ -43,6 +45,7 @@ class _DescriptionTextfieldState extends State<DescriptionTextfield> {
         //maxLines: null, // Allow multi-line input
         maxLines: widget.maxLines,
         controller: widget.controller,
+        cursorColor: AppColors.context(context).primaryColor,
         decoration: InputDecoration(
           floatingLabelBehavior: FloatingLabelBehavior.auto,
           alignLabelWithHint: false,
@@ -64,8 +67,8 @@ class _DescriptionTextfieldState extends State<DescriptionTextfield> {
               borderRadius: BorderRadius.circular(10)
           ),
           focusedBorder: OutlineInputBorder(
-              borderSide: const BorderSide(
-                color: Colors.green,
+              borderSide:  BorderSide(
+                color: AppColors.context(context).primaryColor,
                 width: 2
               ),
               borderRadius: BorderRadius.circular(10)

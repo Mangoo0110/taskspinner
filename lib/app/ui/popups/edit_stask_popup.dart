@@ -43,8 +43,6 @@ class _EditTaskPopupState extends State<EditTaskPopup> {
             details: _taskDetailsController.text,
             buttonStatusNotifier: saveStatusNotifier,
           ).then((_) {
-            _taskNameController.clear();
-            _taskDetailsController.clear();
           });
       } else {
         await widget.tasksDataProvider.updateTask(
@@ -218,7 +216,7 @@ class _EditTaskPopupState extends State<EditTaskPopup> {
               ),
             ),
             // task delete button
-            if(widget.editingTask != null) Column(
+            if(widget.editingTask != null && (saveStatusNotifier.status.runtimeType == EnabledStatus || saveStatusNotifier.status.runtimeType == DisabledStatus )) Column(
               children: [
                 SizedBox(height: 10,),
                 Align(

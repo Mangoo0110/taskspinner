@@ -50,7 +50,7 @@ mixin class TasksDBActions {
     // Set the button status to loading
     buttonStatusNotifier.setStatus(LoadingStatus(message: "Adding task..."));
     // Simulate a delay for the loading status
-    return Future.delayed(const Duration(milliseconds: 1000), () {}).then((_) async{
+    return Future.delayed(const Duration(milliseconds: 500), () {}).then((_) async{
         return await serviceLocator<CreateTask>().call(task).then((rl) {
           return rl.fold((l) {
             buttonStatusNotifier.setStatus(ErrorStatus(message: l.message));
@@ -77,7 +77,7 @@ mixin class TasksDBActions {
     // Set the button status to loading
     buttonStatusNotifier.setStatus(LoadingStatus(message: "Updating task..."));
     // Simulate a delay for the loading status
-    return Future.delayed(const Duration(milliseconds: 1000), () {}).then((_) async{
+    return Future.delayed(const Duration(milliseconds: 500), () {}).then((_) async{
       return await serviceLocator<UpdateTask>().call(
         UpdateTaskParams(id: id, title: title, details: details, minuteDuration: minuteDuration)
       ).then((rl) {
@@ -97,7 +97,7 @@ mixin class TasksDBActions {
     required ButtonStatusNotifier buttonStatusNotifier,
   }) async {
     buttonStatusNotifier.setStatus(LoadingStatus(message: "Updating task..."));
-    Future.delayed(const Duration(milliseconds: 1000), () {}).then((_) async{
+    Future.delayed(const Duration(milliseconds: 500), () {}).then((_) async{
         return await serviceLocator<DeleteTask>().call(id).then((rl) {
           return rl.fold((l) {
             buttonStatusNotifier.setStatus(ErrorStatus(message: l.message));

@@ -40,7 +40,7 @@ class _DeleteButtonState extends State<DeleteButton> with SingleTickerProviderSt
           dekhao("Successful delete");
           Future.delayed(const Duration(milliseconds: 1000)).then((_) async{
             await AppServices.physicalFeedback.availableFeedbacks();
-            if(context.mounted && mounted) {
+            if(mounted && context.mounted) {
               widget.onDone();
             }
           });

@@ -3,8 +3,6 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:taskspinner/app/ui/controllers/tasks_data_provider.dart';
-import 'package:uuid/uuid.dart' show Uuid;
-
 import '../../../core/commons/enums/tasktype.dart';
 import '../../../core/helpers/dekhao.dart';
 import '../../domain/entities/wheel_task.dart';
@@ -34,10 +32,13 @@ base class UpToDateCurrentTasks {
 class TaskWheelUINotifier extends ChangeNotifier {
 
   TaskWheelUINotifier({required this.wheelStreamcontroller, required this.tasksDataProvider}){
+    _setUpToDateCurrentTasks();
+    // Listen to the task update from db.
     tasksDataProvider.addListener(() {
       _setUpToDateCurrentTasks();
     });
   }
+
   UpToDateCurrentTasks _upToDateCurrentTasks = UpToDateCurrentTasks(WheelTask.dummies(TaskType.easy));
   UpToDateCurrentTasks get upToDateCurrentTasks => _upToDateCurrentTasks;
 

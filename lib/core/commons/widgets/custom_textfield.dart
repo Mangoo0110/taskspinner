@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:taskspinner/utils/constants/app_colors.dart';
 
 import '../../helpers/dekhao.dart';
 
@@ -58,6 +59,7 @@ class _CustomTextfieldState extends State<CustomTextfield> {
             },
             
             textInputAction: TextInputAction.next,
+            cursorColor: AppColors.context(context).primaryColor,
             decoration: InputDecoration(
               
               // floatingLabelBehavior: FloatingLabelBehavior.auto,
@@ -79,7 +81,7 @@ class _CustomTextfieldState extends State<CustomTextfield> {
                 borderRadius: BorderRadius.circular(10),
               ),
               focusedBorder: OutlineInputBorder(
-                borderSide: const BorderSide(color: Colors.green, width: 2),
+                borderSide: BorderSide(color: AppColors.context(context).primaryColor, width: 2),
                 borderRadius: BorderRadius.circular(10),
               ),
             ),

@@ -51,7 +51,7 @@ class WheelTask {
     
     WheelTask(
       id: DateTime.now().add(Duration(milliseconds: 80)).millisecondsSinceEpoch.toString(),
-      title: "CLean",
+      title: "Clean",
       details: "Start with living room, then study room, then the kitchen.",
       minuteDuration: 1,
       createdAt: DateTime.now(),
@@ -80,7 +80,7 @@ class WheelTask {
     
     WheelTask(
       id: DateTime.now().add(Duration(milliseconds: 80)).millisecondsSinceEpoch.toString(),
-      title: "CLean",
+      title: "Clean",
       details: "Start with living room, then study room, then the kitchen.",
       minuteDuration: 20,
       createdAt: DateTime.now(),
@@ -110,7 +110,7 @@ class WheelTask {
     
     WheelTask(
       id: DateTime.now().add(Duration(milliseconds: 80)).millisecondsSinceEpoch.toString(),
-      title: "CLean",
+      title: "Clean",
       details: "Start with living room, then study room, then the kitchen.",
       minuteDuration: 55,
       createdAt: DateTime.now(),

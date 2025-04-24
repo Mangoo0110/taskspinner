@@ -9,18 +9,23 @@ import 'dekhao.dart';
 class PhysicalFeedback {
   late AudioPlayer _audioPlayer;
   late Setting _setting;
+  SettingsDataProvider settingsDataProvider;
 
 
-  PhysicalFeedback(SettingsDataProvider settingsDataProvider, {AudioPlayer? player}) {
+  PhysicalFeedback(this.settingsDataProvider, {AudioPlayer? player}) {
     _audioPlayer = player ?? AudioPlayer();
     _setting = settingsDataProvider.currentSetting;
-    settingsDataProvider.addListener(() {
-      _setting = settingsDataProvider.currentSetting;
-    });
+    _listen();
   }
 
   Future<void> dispose() async{
     await _audioPlayer.dispose();
+  }
+
+  void _listen() {
+    settingsDataProvider.addListener(() {
+      _setting = settingsDataProvider.currentSetting;
+    });
   }
 
 
