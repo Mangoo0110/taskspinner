@@ -51,7 +51,7 @@ class _TaskTypeAndDurationState extends State<TaskTypeAndDuration> {
   @override
   void initState() {
     super.initState();
-    _duration = (1).clamp(0, 60);
+    _duration = (0).clamp(0, 60);
     _controller = TextEditingController(text: _duration.toString());
   }
 
