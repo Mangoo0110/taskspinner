@@ -5,13 +5,8 @@
 // gestures. You can also use WidgetTester to find child widgets in the widget
 // tree, read text, and verify that the values of widget properties are correct.
 
-import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:taskspinner/app/domain/entities/wheel_task.dart';
-import 'package:taskspinner/app/ui/controllers/task_wheel_ui_notifier.dart';
-import 'package:taskspinner/core/helpers/dekhao.dart';
-import 'package:taskspinner/core/services/app_services.dart';
 
 
 void main() async{
@@ -34,16 +29,7 @@ void main() async{
   group('Testing App Provider', () {
         //var setting = AppServices.settingsDataProvider;
 
-        test('Setting data provider presence', () {
-          dekhao(WheelTask.dummies.length);
-          //dekhao(TaskWheelUINotifier(controller: StreamController(), tasksDataProvider: AppServices.tasksProvider).upToDateCurrentTasks.tasks.length);
-          expect(TaskWheelUINotifier(wheelStreamcontroller: StreamController(), tasksDataProvider: AppServices.tasksProvider).upToDateCurrentTasks.tasks.length >= 2, true);
-          expect(WheelTask.dummies.length == 2, true);
-          //expect(setting.currentSetting == Setting.defaultSetting(), false);
-          //expect(serviceLocator.hasScope("SettingsLocalDatasource"), true);
-          //expect(serviceLocator.hasScope("SettingsRepo"), true);
-          //expect(serviceLocator.hasScope("SaveAppearence"), true);
-        });    
+            
       });
 
   

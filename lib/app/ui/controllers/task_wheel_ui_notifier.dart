@@ -34,11 +34,12 @@ base class UpToDateCurrentTasks {
 class TaskWheelUINotifier extends ChangeNotifier {
 
   TaskWheelUINotifier({required this.wheelStreamcontroller, required this.tasksDataProvider}){
-    _upToDateCurrentTasks = UpToDateCurrentTasks(tasksDataProvider.easyTasks.length > 1 ? tasksDataProvider.easyTasks : WheelTask.dummies);
     tasksDataProvider.addListener(() {
       _setUpToDateCurrentTasks();
     });
   }
+  UpToDateCurrentTasks _upToDateCurrentTasks = UpToDateCurrentTasks(WheelTask.dummies(TaskType.easy));
+  UpToDateCurrentTasks get upToDateCurrentTasks => _upToDateCurrentTasks;
 
   final StreamController<int> wheelStreamcontroller;
   final TasksDataProvider tasksDataProvider;
@@ -67,11 +68,8 @@ class TaskWheelUINotifier extends ChangeNotifier {
     notifyListeners();
   }
 
-  static final List<WheelTask> _dummyTasks = WheelTask.dummies;
-  final int _leastTasksForWheel = WheelTask.dummies.length;
-  
-  UpToDateCurrentTasks _upToDateCurrentTasks = UpToDateCurrentTasks(_dummyTasks);
-  UpToDateCurrentTasks get upToDateCurrentTasks => _upToDateCurrentTasks;
+  List<WheelTask> _dummyTasks() => WheelTask.dummies(_currentTaskType);
+  final int _leastTasksForWheel = WheelTask.easyDummies.length;
 
   void _setUpToDateCurrentTasks() {
     
@@ -83,10 +81,11 @@ class TaskWheelUINotifier extends ChangeNotifier {
     } else if (_currentTaskType == TaskType.hard) {
       tasks = tasksDataProvider.hardTasks;
     } 
-    // Add dummies until task length is greater than equal 2.
+    // Add dummies until task length is greater than equal 3.
+    List<WheelTask> dummyTasks = _dummyTasks();
     int dumIndex = 0;
-    while(tasks.length < _leastTasksForWheel && (dumIndex < _dummyTasks.length)) {
-      tasks.add(_dummyTasks[dumIndex]);
+    while(tasks.length < _leastTasksForWheel && (dumIndex < dummyTasks.length)) {
+      tasks.add(dummyTasks[dumIndex]);
       dumIndex++;
     }
     _upToDateCurrentTasks = UpToDateCurrentTasks(tasks);
@@ -107,4 +106,5 @@ class TaskWheelUINotifier extends ChangeNotifier {
     _isSpinning = true; notifyListeners();
     wheelStreamcontroller.add(_selectedIndex);
   }
+  
 }

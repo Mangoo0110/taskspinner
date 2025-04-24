@@ -1,8 +1,8 @@
 
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
-import '../../../utils/constants/app_colors.dart';
 import '../../../utils/constants/app_sizes.dart';
 
 class LuckyTaskDuration extends StatefulWidget {
@@ -49,7 +49,7 @@ class _LuckyTaskDurationState extends State<LuckyTaskDuration> {
 
   @override
   Widget build(BuildContext context) {
-    final percent = _duration / 60;
+    final percent = min(1, _duration / 60);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

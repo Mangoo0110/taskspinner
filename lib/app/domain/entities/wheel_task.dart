@@ -19,7 +19,18 @@ class WheelTask {
 
   TaskType get type => TaskType.typeFromDurationLength(minuteDuration);
 
-  static List<WheelTask> get dummies => [
+  static List<WheelTask> dummies(TaskType type) {
+    switch (type) {
+      case TaskType.easy:
+        return easyDummies;
+      case TaskType.medium:
+        return mediumDummies;
+      case TaskType.hard:
+        return hardDummies;
+    }
+  }
+
+  static final List<WheelTask> easyDummies = [
     WheelTask(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       title: "Relax",
@@ -43,6 +54,65 @@ class WheelTask {
       title: "CLean",
       details: "Start with living room, then study room, then the kitchen.",
       minuteDuration: 1,
+      createdAt: DateTime.now(),
+    )
+    .._isDummy = true,
+  ];
+
+  static final List<WheelTask> mediumDummies = [
+    WheelTask(
+      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      title: "Relax",
+      details: "Only chill",
+      minuteDuration: 10,
+      createdAt: DateTime.now(),
+    )
+    .._isDummy = true,
+
+    WheelTask(
+      id: DateTime.now().add(Duration(milliseconds: 20)).millisecondsSinceEpoch.toString(),
+      title: "Exercise",
+      details: "Start with a walk, then stretch, then do some yoga",
+      minuteDuration: 15,
+      createdAt: DateTime.now(),
+    )
+    .._isDummy = true,
+    
+    WheelTask(
+      id: DateTime.now().add(Duration(milliseconds: 80)).millisecondsSinceEpoch.toString(),
+      title: "CLean",
+      details: "Start with living room, then study room, then the kitchen.",
+      minuteDuration: 20,
+      createdAt: DateTime.now(),
+    )
+    .._isDummy = true,
+  ];
+
+
+  static final List<WheelTask> hardDummies = [
+    WheelTask(
+      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      title: "Relax",
+      details: "Only chill",
+      minuteDuration: 45,
+      createdAt: DateTime.now(),
+    )
+    .._isDummy = true,
+
+    WheelTask(
+      id: DateTime.now().add(Duration(milliseconds: 20)).millisecondsSinceEpoch.toString(),
+      title: "Exercise",
+      details: "Start with a walk, then stretch, then do some yoga",
+      minuteDuration: 50,
+      createdAt: DateTime.now(),
+    )
+    .._isDummy = true,
+    
+    WheelTask(
+      id: DateTime.now().add(Duration(milliseconds: 80)).millisecondsSinceEpoch.toString(),
+      title: "CLean",
+      details: "Start with living room, then study room, then the kitchen.",
+      minuteDuration: 55,
       createdAt: DateTime.now(),
     )
     .._isDummy = true,
