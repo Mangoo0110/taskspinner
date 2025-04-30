@@ -16,8 +16,6 @@ extension AppThemeModeExtension on ThemeMode {
         return "System";
     }
   }
-
-  
 }
 
 enum PrimaryColorMode {
@@ -39,7 +37,7 @@ enum PrimaryColorMode {
       case PrimaryColorMode.blue:
         return Colors.blueAccent;
       case PrimaryColorMode.yellow:
-        return Colors.lime;
+        return Colors.yellowAccent;
       case PrimaryColorMode.pink:
         return Colors.pinkAccent;
       case PrimaryColorMode.purple:

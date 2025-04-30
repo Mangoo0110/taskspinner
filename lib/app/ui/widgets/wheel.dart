@@ -49,6 +49,15 @@ class _WheelState extends State<Wheel> {
         });
       }
     });
+
+    // Listen to settings data provider too 
+    widget.settingsDataProvider.addListener(() {
+      dekhao("data changed in settings notifier");
+      if (mounted && context.mounted && setting != widget.settingsDataProvider.currentSetting) {
+        setting = widget.settingsDataProvider.currentSetting;
+        setState(() {});
+      }
+    });
     super.didChangeDependencies();
   }
 
@@ -127,6 +136,7 @@ class _WheelState extends State<Wheel> {
                               }
                             },
                             style: FortuneItemStyle(
+                              borderColor: Colors.grey.shade300,
                               color: task.isDummy ? Colors.black.withAlpha(100): AppColors.context(context).primaryColor.withAlpha(
                                 (255 * (index + 1) / upToDateCurrentTasks.tasks.length).round(),
                               ),
@@ -142,7 +152,7 @@ class _WheelState extends State<Wheel> {
                                       style: Theme.of(
                                         context,
                                       ).textTheme.labelLarge?.copyWith(
-                                        color: AppColors.context(context).textColor,
+                                        color: Colors.white,
                                       ),
                                     ),
                                   ),

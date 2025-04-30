@@ -19,9 +19,9 @@ class Setting {
   static Setting defaultSetting() {
     return Setting(
       themeMode: ThemeMode.system,
-      primaryColorMode: PrimaryColorMode.blue,
-      assetBackgroundImagePath: null,
-      hapticImpact: false,
+      primaryColorMode: PrimaryColorMode.purple,
+      assetBackgroundImagePath: "assets/images/background4.jpeg",
+      hapticImpact: true,
       tickSound: true
     );
   }
